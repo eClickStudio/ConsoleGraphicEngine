@@ -8,25 +8,22 @@ namespace ConsoleGraphicEngine.Engine.Objects.Components.Rendering
     {
         public Vector2Int resolution { get; private set; }
         private const float _charAspect = 11f / 24f;
-        private float _resolutionAspect;
+        private float _resolutionAspect { get; }
 
         private char[] _brightnessGradient;
 
-        private Vector3 DEFAULT_DIRECTION = new Vector3(1, 0, 0);
-        //public Vector3 direction
-        //{
-        //    get
-        //    {
-        //        return Vector3.Transform(DEFAULT_DIRECTION, new Quaternion(0, ));
-        //    }
-        //}
+        public float pixelsPerUnit { get; }
+        private Vector2 _screenWorldSize { get; }
 
-        public Camera(Vector2Int resolution, in char[] colorsGradient)
+        public Camera(Vector2Int resolution, float pixelsPerUnit, in char[] colorsGradient)
         {
             this.resolution = resolution;
+            this.pixelsPerUnit = pixelsPerUnit;
             _resolutionAspect = (float)resolution.X / resolution.Y;
 
            _brightnessGradient = colorsGradient;
+
+            _screenWorldSize = resolution / pixelsPerUnit;
         }
 
         public char GetPixel(float brightness)
@@ -38,7 +35,7 @@ namespace ConsoleGraphicEngine.Engine.Objects.Components.Rendering
             return _brightnessGradient[brightnessIndex];
         }
 
-        public Vector2 GetRelativePosition(int absoluteX, int absoluteY)
+        private Vector2 GetRelativePosition(int absoluteX, int absoluteY)
         {
             return new Vector2(
                 ((float)absoluteX / resolution.X * 2 - 1) * _resolutionAspect * _charAspect,
@@ -46,14 +43,16 @@ namespace ConsoleGraphicEngine.Engine.Objects.Components.Rendering
             );
         }
 
-        public Vector2 GetRelativePosition(Vector2Int absolutePosition)
+        public Vector3 GetRayDirection(Vector2Int screenPosition)
         {
-            return GetRelativePosition(absolutePosition.X, absolutePosition.Y);
+            Transform transform = parentObject.transform;
+
+            Vector2 relativeScreenPosition = GetRelativePosition(screenPosition.X, screenPosition.Y);
+
+            float x = relativeScreenPosition.X * _screenWorldSize.X;
+            float y = relativeScreenPosition.Y * _screenWorldSize.Y;
+
+            return Vector3.Normalize(x * transform.directionRight + y * transform.directionUp + transform.directionForward);
         }
-
-        //public Vector3 GetRayDirection(Vector2Int screenPosition)
-        //{
-
-        //}
     }
 }

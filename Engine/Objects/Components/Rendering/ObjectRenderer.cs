@@ -1,8 +1,11 @@
-﻿using System;
+﻿using ConsoleGraphicEngine.Engine.Tools;
+using System;
+using System.Collections.Generic;
+using System.Numerics;
 
 namespace ConsoleGraphicEngine.Engine.Objects.Components.Rendering
 {
-    class ObjectRenderer : Component
+    internal abstract class ObjectRenderer : Component
     {
         public Material material;
 
@@ -10,5 +13,7 @@ namespace ConsoleGraphicEngine.Engine.Objects.Components.Rendering
         {
             material = Material.standart;
         }
+
+        public abstract IReadOnlyList<Vector3> Intersect(Ray ray);
     }
 }

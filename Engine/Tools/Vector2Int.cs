@@ -1,4 +1,6 @@
-﻿namespace ConsoleGraphicEngine.Engine.Tools
+﻿using System.Numerics;
+
+namespace ConsoleGraphicEngine.Engine.Tools
 {
     /// <summary>
     /// Struct stores x and y position
@@ -39,6 +41,11 @@
             return new Vector2Int(a.X * multiplier, a.Y * multiplier);
         }
 
+        public static Vector2 operator *(Vector2Int a, float multiplier)
+        {
+            return new Vector2(a.X * multiplier, a.Y * multiplier);
+        }
+
         public static Vector2Int operator /(Vector2Int a, Vector2Int b)
         {
             return new Vector2Int(a.X / b.X, a.Y / b.Y);
@@ -47,6 +54,11 @@
         public static Vector2Int operator /(Vector2Int a, int dividor)
         {
             return new Vector2Int(a.X / dividor, a.Y / dividor);
+        }
+
+        public static Vector2 operator /(Vector2Int a, float dividor)
+        {
+            return new Vector2(a.X / dividor, a.Y / dividor);
         }
 
         public static bool operator ==(Vector2Int a, Vector2Int b)

@@ -1,6 +1,4 @@
-﻿using ConsoleGraphicEngine.Engine.ConsoleSetter;
-using ConsoleGraphicEngine.Engine.Objects;
-using ConsoleGraphicEngine.Engine.Objects.Components;
+﻿using ConsoleGraphicEngine.Engine.Objects;
 using ConsoleGraphicEngine.Engine.Objects.Components.Rendering;
 using ConsoleGraphicEngine.Engine.Objects.Scenes;
 using ConsoleGraphicEngine.Engine.Tools;
@@ -13,7 +11,7 @@ namespace ConsoleGraphicEngine.Engine
 {
     internal class GraphicEngine
     {
-        private const int _FPS = 10;
+        private const int _FPS = 1;
         private const int _FRAME_TIME = 1000 / _FPS;
 
         private bool _isRendering;
@@ -22,46 +20,34 @@ namespace ConsoleGraphicEngine.Engine
         private uint _deltaTime;
         private uint _time;
 
-        public IScene scene;
+        private IScene _scene { get; }
+        private Camera _camera { get; }
+        private Vector2Int _resolution { get; }
+        private char[] _screen;
 
-        public GraphicEngine(in Scene scene)
+
+        public GraphicEngine(in IScene scene)
         {
-            this.scene = scene;
+            _scene = scene;
+            _camera = scene.mainCamera;
+
+            _resolution = _camera.resolution;
+            _screen = new char[_resolution.X * _resolution.Y];
         }
 
         public void StartRendering()
         {
             _isRendering = true;
 
-            Camera camera = scene.mainCamera;
-            Vector2Int resolution = camera.resolution;
-
-            int screenCapacity = resolution.X * resolution.Y;
-
-            char[] screen = new char[screenCapacity];
-
             while (_isRendering)
             {
-                for (int x = 0; x < resolution.X; x++)
-                {
-                    for (int y = 0; y < resolution.Y; y++)
-                    {
-                        Vector2 position = camera.GetRelativePosition(x, y);
-
-                        char pixel = camera.GetPixel(RenderFrame(position));
-
-                        screen[x + y * resolution.X] = pixel;
-                    }
-                }
-
                 Thread.Sleep(_FRAME_TIME);
 
                 _frameNumber++;
                 _deltaTime = _FRAME_TIME;
                 _time += _deltaTime;
 
-                //screen[(_consoleSize.x) * (_consoleSize.y) - 1] = '@';
-                Console.Write(screen);
+                RenderFrame();
             }
         }
 
@@ -70,16 +56,53 @@ namespace ConsoleGraphicEngine.Engine
             _isRendering = false;
         }
 
-        private float RenderFrame(Vector2 position)
+        private void RenderFrame()
         {
-            position.X += (float)Math.Sin(_time * 0.005f);
-
-            float r = (float)Math.Sqrt(position.X * position.X + position.Y * position.Y);
-
-            if (r < 0.5f)
+            for (int x = 0; x < _resolution.X; x++)
             {
-                return 1 - r / 0.5f;
+                for (int y = 0; y < _resolution.Y; y++)
+                {
+                    Vector2Int screenPosition = new Vector2Int(x, y);
+
+                    char pixel = _camera.GetPixel(RenderRay(screenPosition));
+
+                    _screen[x + y * _resolution.X] = pixel;
+                }
             }
+
+            Console.Write(_screen);
+        }
+
+        private float RenderRay(Vector2Int screenPosition)
+        {
+            Vector3 rayDirection = _camera.GetRayDirection(screenPosition);
+            Console.WriteLine(rayDirection);
+
+            foreach (IObject3D object3d in _scene.GetObjects())
+            {
+                VisibleObject visibleObject = object3d as VisibleObject;
+
+                if (visibleObject != null)
+                {
+                    Ray ray = new Ray(_camera.parentObject.transform.position, rayDirection);
+                    IReadOnlyList<Vector3> intersecions = visibleObject.renderer.Intersect(ray);
+                    
+                    if (intersecions != null && intersecions.Count > 0)
+                    {
+                        Console.WriteLine("Intersect!");
+                        return 1;
+                    }
+                }
+            }
+
+            //screenPosition.X += (float)Math.Sin(_time * 0.005f);
+
+            //float r = (float)Math.Sqrt(screenPosition.X * screenPosition.X + screenPosition.Y * screenPosition.Y);
+
+            //if (r < 0.5f)
+            //{
+            //    return 1 - r / 0.5f;
+            //}
 
             return 0;
         }

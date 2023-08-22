@@ -38,7 +38,10 @@ namespace ConsoleGraphicEngine.Engine.Objects.Scenes
 
         public void AddObjects(params IObject3D[] objects3D)
         {
-            AddObjects(objects3D);
+            foreach (IObject3D object3D in objects3D)
+            {
+                AddObject(object3D);
+            }
         }
 
         public bool ContainsObject(in IObject3D object3D)
