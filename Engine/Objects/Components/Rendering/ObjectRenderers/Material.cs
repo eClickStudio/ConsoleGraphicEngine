@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ConsoleGraphicEngine.Engine.Objects.Components.Rendering
+namespace ConsoleGraphicEngine.Engine.Objects.Components.Rendering.ObjectRenderers
 {
     struct Material
     {

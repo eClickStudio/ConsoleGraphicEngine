@@ -1,5 +1,7 @@
-﻿using ConsoleGraphicEngine.Engine.Objects;
+﻿using ConsoleGraphicEngine.Engine.Objects.Abstract;
 using ConsoleGraphicEngine.Engine.Objects.Components.Rendering;
+using ConsoleGraphicEngine.Engine.Objects.Components.Rendering.Light;
+using ConsoleGraphicEngine.Engine.Objects.Components.Rendering.ObjectRenderers.Abstract;
 using ConsoleGraphicEngine.Engine.Objects.Scenes;
 using ConsoleGraphicEngine.Engine.Tools;
 using System;
@@ -14,6 +16,8 @@ namespace ConsoleGraphicEngine.Engine
         private const int _FPS = 1;
         private const int _FRAME_TIME = 1000 / _FPS;
 
+        private int _rayIterations { get; }
+
         private bool _isRendering;
 
         private uint _frameNumber;
@@ -22,14 +26,18 @@ namespace ConsoleGraphicEngine.Engine
 
         private IScene _scene { get; }
         private Camera _camera { get; }
+        private GlobalLight _light { get; }
         private Vector2Int _resolution { get; }
         private char[] _screen;
 
 
-        public GraphicEngine(in IScene scene)
+        public GraphicEngine(in IScene scene, int rayIterations)
         {
             _scene = scene;
             _camera = scene.mainCamera;
+            _light = scene.globalLight;
+
+            _rayIterations = rayIterations;
 
             _resolution = _camera.resolution;
             _screen = new char[_resolution.X * _resolution.Y];
@@ -56,7 +64,7 @@ namespace ConsoleGraphicEngine.Engine
             _isRendering = false;
         }
 
-        private void RenderFrame()
+        public void RenderFrame()
         {
             for (int x = 0; x < _resolution.X; x++)
             {
@@ -64,7 +72,12 @@ namespace ConsoleGraphicEngine.Engine
                 {
                     Vector2Int screenPosition = new Vector2Int(x, y);
 
-                    char pixel = _camera.GetPixel(RenderRay(screenPosition));
+                    Ray ray = new Ray(
+                        _camera.parentObject.transform.position, 
+                        _camera.GetRayDirection(screenPosition)
+                    );
+
+                    char pixel = _camera.GetPixel(RenderRay(ray));
 
                     _screen[x + y * _resolution.X] = pixel;
                 }
@@ -73,38 +86,77 @@ namespace ConsoleGraphicEngine.Engine
             Console.Write(_screen);
         }
 
-        private float RenderRay(Vector2Int screenPosition)
+        private float RenderRay(Ray ray)
         {
-            Vector3 rayDirection = _camera.GetRayDirection(screenPosition);
-            Console.WriteLine(rayDirection);
+            //float brightness = _light.intensivety;
 
-            foreach (IObject3D object3d in _scene.GetObjects())
+            //for (int i = 0; i < _rayIterations; i++)
+            //{
+            //    Intersection? nearestIntersection = GetNearestIntersection(ray);
+            //    if (nearestIntersection.HasValue)
+            //    {
+            //        Vector3 position = ray.startPosition + ray.direction * nearestIntersection.Value.intersectionDistance;
+            //        Ray normal = nearestIntersection.Value.intersectedRenderer.GetNormal(position);
+
+            //        ray = Ray.Reflect(ray, normal);
+
+            //        brightness *= (1 - Vector3.Dot(Vector3.Normalize(nearestIntersection.Value), _light.direction)) * _light.intensivety;
+            //    }
+            //    else
+            //    {
+            //        break;
+            //    }
+            //}
+
+            //return brightness;
+
+            Intersection? nearestIntersection = GetNearestIntersection(ray);
+            if (nearestIntersection.HasValue)
             {
-                VisibleObject visibleObject = object3d as VisibleObject;
+                Vector3 position = ray.startPosition + ray.direction * nearestIntersection.Value.intersectionDistance;
+                Ray normal = nearestIntersection.Value.intersectedRenderer.GetNormal(position);
 
-                if (visibleObject != null)
+                ray = Ray.Reflect(ray, normal);
+
+                return (1 - Vector3.Dot(normal.direction, _light.direction)) * _light.intensivety;
+            }
+
+            return 0;
+        }
+
+        private Intersection? GetNearestIntersection(Ray ray)
+        {
+            bool isIntersect = false;
+
+            float minIntersectionDistance = float.MaxValue;
+            IObjectRenderer intersectedRenderer = null;
+
+            foreach (IVisibleObject visibleObject in _scene.GetVisibleObjects())
+            {
+                IReadOnlyList<float> distances = visibleObject.renderer.GetIntersectionDistances(ray);
+
+                if (distances != null && distances.Count > 0)
                 {
-                    Ray ray = new Ray(_camera.parentObject.transform.position, rayDirection);
-                    IReadOnlyList<Vector3> intersecions = visibleObject.renderer.Intersect(ray);
-                    
-                    if (intersecions != null && intersecions.Count > 0)
+                    isIntersect = true;
+
+                    foreach (float intersectionDistance in distances)
                     {
-                        Console.WriteLine("Intersect!");
-                        return 1;
+                        if (intersectionDistance < minIntersectionDistance)
+                        {
+                            minIntersectionDistance = intersectionDistance;
+
+                            intersectedRenderer = visibleObject.renderer;
+                        }
                     }
                 }
             }
 
-            //screenPosition.X += (float)Math.Sin(_time * 0.005f);
+            if (isIntersect)
+            {
+                return new Intersection(intersectedRenderer, minIntersectionDistance);
+            }
 
-            //float r = (float)Math.Sqrt(screenPosition.X * screenPosition.X + screenPosition.Y * screenPosition.Y);
-
-            //if (r < 0.5f)
-            //{
-            //    return 1 - r / 0.5f;
-            //}
-
-            return 0;
+            return null;
         }
     }
 }

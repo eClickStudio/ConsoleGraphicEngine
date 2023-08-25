@@ -50,5 +50,15 @@ namespace ConsoleGraphicEngine.Engine.Tools
         {
             return !(ray1 == ray2);
         }
+
+        public static Ray Reflect(Ray ray, Ray normal)
+        {
+            return new Ray(normal.startPosition, Vector3.Reflect(ray.direction, normal.direction));
+        }
+
+        public override string ToString()
+        {
+            return $"{startPosition}; {direction}";
+        }
     }
 }

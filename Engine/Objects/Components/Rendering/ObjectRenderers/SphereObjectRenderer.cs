@@ -1,20 +1,21 @@
-﻿using ConsoleGraphicEngine.Engine.Tools;
+﻿using ConsoleGraphicEngine.Engine.Objects.Components.Rendering.ObjectRenderers.Abstract;
+using ConsoleGraphicEngine.Engine.Tools;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
 
-namespace ConsoleGraphicEngine.Engine.Objects.Components.Rendering
+namespace ConsoleGraphicEngine.Engine.Objects.Components.Rendering.ObjectRenderers
 {
     class SphereObjectRenderer : ObjectRenderer
     {
-        public float radius { get; private set; }
+        public float radius { get; }
 
         public SphereObjectRenderer(float radius)
         {
             this.radius = radius;
         }
 
-        public override IReadOnlyList<Vector3> Intersect(Ray ray)
+        public override IReadOnlyList<float> GetIntersectionDistances(Ray ray)
         {
             Vector3 position = parentObject.transform.position;
 
@@ -35,15 +36,15 @@ namespace ConsoleGraphicEngine.Engine.Objects.Components.Rendering
             float distanceTo1Point = distanceRayStartToNearest - centerOffset;
             float distanceTo2Point = distanceRayStartToNearest + centerOffset;
 
-            Lazy<List<Vector3>> intersections = new Lazy<List<Vector3>>();
+            Lazy<List<float>> intersections = new Lazy<List<float>>();
 
             if (distanceTo1Point >= 0)
             {
-                intersections.Value.Add(ray.startPosition + ray.direction * distanceTo1Point);
+                intersections.Value.Add(distanceTo1Point);
             }
             if (distanceTo2Point >= 0 && distanceTo1Point != distanceTo2Point)
             {
-                intersections.Value.Add(ray.startPosition + ray.direction * distanceTo2Point);
+                intersections.Value.Add(distanceTo2Point);
             }
 
             if (intersections.IsValueCreated)
@@ -54,6 +55,13 @@ namespace ConsoleGraphicEngine.Engine.Objects.Components.Rendering
             {
                 return null;
             }
+        }
+
+        public override Ray GetNormal(Vector3 position)
+        {
+            Vector3 centerPosition = parentObject.transform.position;
+
+            return new Ray(position, Vector3.Normalize(position - centerPosition));
         }
     }
 }

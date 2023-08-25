@@ -1,7 +1,8 @@
 ﻿using ConsoleGraphicEngine.Engine.Objects.Components;
+using ConsoleGraphicEngine.Engine.Objects.Components.Abstract;
 using System.Collections.Generic;
 
-namespace ConsoleGraphicEngine.Engine.Objects
+namespace ConsoleGraphicEngine.Engine.Objects.Abstract
 {
     interface IObject3D
     {

@@ -1,8 +1,9 @@
 ﻿using ConsoleGraphicEngine.Engine.Objects.Components;
+using ConsoleGraphicEngine.Engine.Objects.Components.Abstract;
 using System;
 using System.Collections.Generic;
 
-namespace ConsoleGraphicEngine.Engine.Objects
+namespace ConsoleGraphicEngine.Engine.Objects.Abstract
 {
     internal class Object3D : IObject3D
     {
@@ -17,7 +18,8 @@ namespace ConsoleGraphicEngine.Engine.Objects
             components = new List<Component>();
 
             transform = new Transform();
-            transform.parentObject = this;
+
+            AddComponent(transform);
         }
 
         public void AddComponent(in Component component)
@@ -39,7 +41,7 @@ namespace ConsoleGraphicEngine.Engine.Objects
 
         public T GetComponent<T>() where T : Component
         {
-            Predicate<IComponent> predicate = (IComponent element) => element is T;
+            Predicate<IComponent> predicate = (element) => element is T;
 
             return components.Find(predicate) as T;
         }

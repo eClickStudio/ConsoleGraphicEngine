@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Numerics;
-using ConsoleGraphicEngine.Engine.Tools;
+using ConsoleGraphicEngine.Engine.Objects.Components.Abstract;
 using Quaternion = ConsoleGraphicEngine.Engine.Tools.Quaternion;
 
 namespace ConsoleGraphicEngine.Engine.Objects.Components
@@ -9,9 +9,9 @@ namespace ConsoleGraphicEngine.Engine.Objects.Components
     {
         public Vector3 position;
 
-        public Vector3 directionUp { get; private set; } = new Vector3(0, 0, 1);
-        public Vector3 directionForward { get; private set; } = new Vector3(1, 0, 0);
-        public Vector3 directionRight { get; private set; } = new Vector3(0, 1, 0);
+        public Vector3 axisX { get; private set; } = new Vector3(1, 0, 0);
+        public Vector3 axisY { get; private set; } = new Vector3(0, 1, 0);
+        public Vector3 axisZ { get; private set; } = new Vector3(0, 0, 1);
 
         public Transform() 
         {
@@ -25,9 +25,9 @@ namespace ConsoleGraphicEngine.Engine.Objects.Components
 
         public void Rotate(Vector3 axis, float angle)
         {
-            directionForward = Vector3.Normalize(RotateVector(directionForward, axis, angle));
-            directionRight = Vector3.Normalize(RotateVector(directionRight, axis, angle));
-            directionUp = Vector3.Normalize(RotateVector(directionUp, axis, angle));
+            axisZ = Vector3.Normalize(RotateVector(axisZ, axis, angle));
+            axisX = Vector3.Normalize(RotateVector(axisX, axis, angle));
+            axisY = Vector3.Normalize(RotateVector(axisY, axis, angle));
         }
 
         private Vector3 RotateVector(Vector3 vector, Vector3 axis, float angle)
