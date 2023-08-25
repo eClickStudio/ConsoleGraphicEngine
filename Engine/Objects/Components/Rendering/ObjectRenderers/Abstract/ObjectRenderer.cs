@@ -8,21 +8,23 @@ namespace ConsoleGraphicEngine.Engine.Objects.Components.Rendering.ObjectRendere
 {
     internal abstract class ObjectRenderer : Component, IObjectRenderer
     {
+        protected const float _RAY_STEP = 0.01f;
+
         public Material material;
 
-        public ObjectRenderer()
+        public ObjectRenderer(Material material)
         {
-            material = Material.standart;
+            this.material = material;
         }
 
-        public float GetBrightness(Vector3 intersectionPosition, Vector3 lightDirection)
+        public float GetBrightness(Vector3 normalDirection, Vector3 lightDirection)
         {
             lightDirection = Vector3.Normalize(lightDirection);
-            Ray normal = GetNormal(intersectionPosition);
+            normalDirection = Vector3.Normalize(normalDirection);
 
             return Math.Clamp(
-                (Vector3.Dot(normal.direction, lightDirection)) * material.reflection + material.brightness,
-                1, 0);
+                (1 - Vector3.Dot(normalDirection, lightDirection)) * material.brightness + material.glow,
+                0, 1);
         }
 
         public abstract IReadOnlyList<float> GetIntersectionDistances(Ray ray);

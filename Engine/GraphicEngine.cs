@@ -8,12 +8,13 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Threading;
+using Quaternion = ConsoleGraphicEngine.Engine.Tools.Quaternion;
 
 namespace ConsoleGraphicEngine.Engine
 {
     internal class GraphicEngine
     {
-        private const int _FPS = 1;
+        private const int _FPS = 3;
         private const int _FRAME_TIME = 1000 / _FPS;
 
         private int _rayIterations { get; }
@@ -56,6 +57,8 @@ namespace ConsoleGraphicEngine.Engine
                 _time += _deltaTime;
 
                 RenderFrame();
+
+                _light.direction = Quaternion.RotateVector(_light.direction, new Vector3(0, 1, 0), (float)_deltaTime / 1000 * (float)Math.PI / 10);
             }
         }
 
@@ -88,40 +91,37 @@ namespace ConsoleGraphicEngine.Engine
 
         private float RenderRay(Ray ray)
         {
-            //float brightness = _light.intensivety;
+            float brightness = _light.intensivety;
 
-            //for (int i = 0; i < _rayIterations; i++)
-            //{
-            //    Intersection? nearestIntersection = GetNearestIntersection(ray);
-            //    if (nearestIntersection.HasValue)
-            //    {
-            //        Vector3 position = ray.startPosition + ray.direction * nearestIntersection.Value.intersectionDistance;
-            //        Ray normal = nearestIntersection.Value.intersectedRenderer.GetNormal(position);
+            bool isIntersect = false;
 
-            //        ray = Ray.Reflect(ray, normal);
-
-            //        brightness *= (1 - Vector3.Dot(Vector3.Normalize(nearestIntersection.Value), _light.direction)) * _light.intensivety;
-            //    }
-            //    else
-            //    {
-            //        break;
-            //    }
-            //}
-
-            //return brightness;
-
-            Intersection? nearestIntersection = GetNearestIntersection(ray);
-            if (nearestIntersection.HasValue)
+            for (int i = 0; i < _rayIterations; i++)
             {
-                Vector3 position = ray.startPosition + ray.direction * nearestIntersection.Value.intersectionDistance;
-                Ray normal = nearestIntersection.Value.intersectedRenderer.GetNormal(position);
+                Intersection? nearestIntersection = GetNearestIntersection(ray);
+                if (nearestIntersection.HasValue)
+                {
+                    isIntersect = true;
 
-                ray = Ray.Reflect(ray, normal);
+                    Vector3 position = ray.startPosition + ray.direction * nearestIntersection.Value.intersectionDistance;
+                    IObjectRenderer renderer = nearestIntersection.Value.intersectedRenderer;
+                    Ray normal = renderer.GetNormal(position);
 
-                return (1 - Vector3.Dot(normal.direction, _light.direction)) * _light.intensivety;
+                    ray = Ray.Reflect(ray, normal);
+
+                    brightness *= renderer.GetBrightness(normal.direction, _light.direction);
+                }
+                else
+                {
+                    if (!isIntersect)
+                    {
+                        brightness = 0;
+                    }
+
+                    break;
+                }
             }
 
-            return 0;
+            return brightness;
         }
 
         private Intersection? GetNearestIntersection(Ray ray)

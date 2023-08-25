@@ -10,7 +10,7 @@ namespace ConsoleGraphicEngine.Engine.Objects.Components.Rendering.ObjectRendere
     {
         public float radius { get; }
 
-        public SphereObjectRenderer(float radius)
+        public SphereObjectRenderer(Material material, float radius) : base(material)
         {
             this.radius = radius;
         }
@@ -60,8 +60,9 @@ namespace ConsoleGraphicEngine.Engine.Objects.Components.Rendering.ObjectRendere
         public override Ray GetNormal(Vector3 position)
         {
             Vector3 centerPosition = parentObject.transform.position;
+            Vector3 direction = Vector3.Normalize(position - centerPosition);
 
-            return new Ray(position, Vector3.Normalize(position - centerPosition));
+            return new Ray(position + direction * _RAY_STEP, direction);
         }
     }
 }

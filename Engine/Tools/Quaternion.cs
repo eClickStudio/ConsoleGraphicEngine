@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Numerics;
 
 namespace ConsoleGraphicEngine.Engine.Tools
 {
@@ -108,6 +109,26 @@ namespace ConsoleGraphicEngine.Engine.Tools
         public override string ToString()
         {
             return $"{Math.Round(a, 3)} + {Math.Round(b, 3)}i + {Math.Round(c, 3)}j + {Math.Round(d, 3)}k";
+        }
+
+        public static Vector3 RotateVector(Vector3 vector, Vector3 axis, float angle)
+        {
+            if (axis == Vector3.Zero)
+            {
+                throw new ArgumentException("Axis vector cannot be null!");
+            }
+
+            axis = Vector3.Normalize(axis);
+
+            Quaternion directionQuaternion = new Quaternion(0, vector.X, vector.Y, vector.Z);
+
+            float cos = (float)Math.Cos(angle / 2);
+            float sin = (float)Math.Sin(angle / 2);
+            Quaternion axisQuaternion = new Quaternion(cos, sin * axis.X, sin * axis.Y, sin * axis.Z);
+
+            Quaternion resultQuaternion = axisQuaternion * directionQuaternion * Сonjugate(axisQuaternion);
+
+            return new Vector3(resultQuaternion.b, resultQuaternion.c, resultQuaternion.d);
         }
     }
 }

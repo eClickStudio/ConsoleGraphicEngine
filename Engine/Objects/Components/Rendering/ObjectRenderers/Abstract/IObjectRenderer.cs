@@ -10,6 +10,6 @@ namespace ConsoleGraphicEngine.Engine.Objects.Components.Rendering.ObjectRendere
 
         Ray GetNormal(Vector3 position);
 
-        float GetBrightness(Vector3 intersectionPosition, Vector3 lightDirection);
+        float GetBrightness(Vector3 normalDirection, Vector3 lightDirection);
     }
 }

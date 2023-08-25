@@ -6,6 +6,8 @@ namespace ConsoleGraphicEngine.Engine.Objects.Components.Rendering.Light
 {
     internal class GlobalLight : Component
     {
+        //TODO: light direction must be depended on transform rotation
+
         private Vector3 _direction;
         public Vector3 direction
         {
