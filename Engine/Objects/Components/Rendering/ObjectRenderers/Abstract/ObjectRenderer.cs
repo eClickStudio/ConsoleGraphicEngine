@@ -10,7 +10,7 @@ namespace ConsoleGraphicEngine.Engine.Objects.Components.Rendering.ObjectRendere
     {
         protected const float _RAY_STEP = 0.01f;
 
-        public Material material;
+        public Material material { get; set; }
 
         public ObjectRenderer(Material material)
         {
@@ -28,6 +28,27 @@ namespace ConsoleGraphicEngine.Engine.Objects.Components.Rendering.ObjectRendere
         }
 
         public abstract IReadOnlyList<float> GetIntersectionDistances(Ray ray);
-        public abstract Ray GetNormal(Vector3 position);
+        public abstract Ray? GetNormal(Ray ray);
+
+        public Vector3? GetNearestIntersection(Ray ray)
+        {
+            IReadOnlyList<float> intersectionDistances = GetIntersectionDistances(ray);
+
+            if (intersectionDistances == null || intersectionDistances.Count == 0)
+            {
+                return null;
+            }
+
+            float minDistance = float.MaxValue;
+            foreach (float intersectionDistance in intersectionDistances)
+            {
+                if (intersectionDistance < minDistance)
+                {
+                    minDistance = intersectionDistance;
+                }
+            }
+
+            return ray.origin + ray.direction * minDistance;
+        }
     }
 }

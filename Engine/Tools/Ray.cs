@@ -5,7 +5,7 @@ namespace ConsoleGraphicEngine.Engine.Tools
 {
     internal struct Ray
     {
-        public Vector3 startPosition;
+        public Vector3 origin;
 
         private Vector3 _direction;
         public Vector3 direction
@@ -27,15 +27,15 @@ namespace ConsoleGraphicEngine.Engine.Tools
 
         public Ray(Vector3 direction)
         {
-            startPosition = new Vector3();
+            origin = new Vector3();
 
             _direction = new Vector3();
             this.direction = direction;
         }
 
-        public Ray(Vector3 startPosition, Vector3 direction)
+        public Ray(Vector3 origin, Vector3 direction)
         {
-            this.startPosition = startPosition;
+            this.origin = origin;
 
             _direction = new Vector3();
             this.direction = direction;
@@ -43,7 +43,7 @@ namespace ConsoleGraphicEngine.Engine.Tools
 
         public static bool operator ==(Ray ray1, Ray ray2)
         {
-            return ray1.startPosition == ray2.startPosition && ray1.direction == ray2.direction;
+            return ray1.origin == ray2.origin && ray1.direction == ray2.direction;
         }
 
         public static bool operator !=(Ray ray1, Ray ray2)
@@ -53,12 +53,12 @@ namespace ConsoleGraphicEngine.Engine.Tools
 
         public static Ray Reflect(Ray ray, Ray normal)
         {
-            return new Ray(normal.startPosition, Vector3.Reflect(ray.direction, normal.direction));
+            return new Ray(normal.origin, Vector3.Reflect(ray.direction, normal.direction));
         }
 
         public override string ToString()
         {
-            return $"{startPosition}; {direction}";
+            return $"{origin}; {direction}";
         }
     }
 }

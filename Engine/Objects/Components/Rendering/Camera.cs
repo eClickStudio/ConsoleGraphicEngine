@@ -10,7 +10,7 @@ namespace ConsoleGraphicEngine.Engine.Objects.Components.Rendering
         public Vector2Int resolution { get; }
         private float _charAspect { get; }
 
-        private char[] _brightnessGradient { get; }
+        private CameraCharSet _charSet { get; }
 
         public float pixelsPerUnit { get; }
         private Vector2 _screenWorldSize { get; }
@@ -24,24 +24,32 @@ namespace ConsoleGraphicEngine.Engine.Objects.Components.Rendering
         /// <param name="pixelsPerUnit">How much pixels must be in world unit</param>
         /// <param name="cameraDepth"></param>
         /// <param name="colorsGradient"></param>
-        public Camera(Vector2Int resolution, Vector2Int charSize, float pixelsPerUnit, float cameraDepth, in char[] colorsGradient)
+        public Camera(Vector2Int resolution, Vector2Int charSize, float pixelsPerUnit, float cameraDepth, CameraCharSet charSet)
         {
             this.resolution = resolution;
             _charAspect = (float)charSize.X / charSize.Y;
-            _brightnessGradient = colorsGradient;
+
+            _charSet = charSet;
 
             this.pixelsPerUnit = pixelsPerUnit;
             _screenWorldSize = resolution / pixelsPerUnit;
             _cameraDepth = _screenWorldSize.X * cameraDepth;
         }
 
-        public char GetPixel(float brightness)
+        public char GetPixel(float? brightness)
         {
-            brightness = Math.Clamp(brightness, 0, 1);
+            if (brightness.HasValue)
+            {
+                brightness = Math.Clamp(brightness.Value, 0, 1);
 
-            int brightnessIndex = Math.Clamp((int)(brightness * _brightnessGradient.Length), 0, _brightnessGradient.Length - 1); ;
+                int brightnessIndex = Math.Clamp((int)(brightness * _charSet.charCount), 0, _charSet.charCount - 1); ;
 
-            return _brightnessGradient[brightnessIndex];
+                return _charSet.brightnessGradient[brightnessIndex];
+            }
+            else
+            {
+                return _charSet.skyChar;
+            }            
         }
 
         private Vector2 GetRelativePosition(int absoluteX, int absoluteY)

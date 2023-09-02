@@ -1,6 +1,7 @@
 ﻿using ConsoleGraphicEngine.Engine.Objects.Abstract;
 using ConsoleGraphicEngine.Engine.Objects.Components.Rendering;
 using ConsoleGraphicEngine.Engine.Objects.Components.Rendering.Light;
+using ConsoleGraphicEngine.Engine.Objects.Components.Rendering.ObjectRenderers;
 using ConsoleGraphicEngine.Engine.Objects.Components.Rendering.ObjectRenderers.Abstract;
 using ConsoleGraphicEngine.Engine.Objects.Scenes;
 using ConsoleGraphicEngine.Engine.Tools;
@@ -12,7 +13,7 @@ using Quaternion = ConsoleGraphicEngine.Engine.Tools.Quaternion;
 
 namespace ConsoleGraphicEngine.Engine
 {
-    internal class GraphicEngine
+    internal class RayTracingGraphicEngine
     {
         private const int _FPS = 3;
         private const int _FRAME_TIME = 1000 / _FPS;
@@ -32,7 +33,7 @@ namespace ConsoleGraphicEngine.Engine
         private char[] _screen;
 
 
-        public GraphicEngine(in IScene scene, int rayIterations)
+        public RayTracingGraphicEngine(in IScene scene, int rayIterations)
         {
             _scene = scene;
             _camera = scene.mainCamera;
@@ -89,9 +90,9 @@ namespace ConsoleGraphicEngine.Engine
             Console.Write(_screen);
         }
 
-        private float RenderRay(Ray ray)
+        private float? RenderRay(Ray ray)
         {
-            float brightness = _light.intensivety;
+            float? brightness = _light.intensivety;
 
             bool isIntersect = false;
 
@@ -102,19 +103,22 @@ namespace ConsoleGraphicEngine.Engine
                 {
                     isIntersect = true;
 
-                    Vector3 position = ray.startPosition + ray.direction * nearestIntersection.Value.intersectionDistance;
                     IObjectRenderer renderer = nearestIntersection.Value.intersectedRenderer;
-                    Ray normal = renderer.GetNormal(position);
 
-                    ray = Ray.Reflect(ray, normal);
+                    Ray? normal = renderer.GetNormal(ray);
 
-                    brightness *= renderer.GetBrightness(normal.direction, _light.direction);
+                    if (normal.HasValue)
+                    {
+                        ray = Ray.Reflect(ray, normal.Value);
+
+                        brightness *= renderer.GetBrightness(normal.Value.direction, _light.direction);
+                    }
                 }
                 else
                 {
                     if (!isIntersect)
                     {
-                        brightness = 0;
+                        brightness = null;
                     }
 
                     break;
@@ -138,14 +142,18 @@ namespace ConsoleGraphicEngine.Engine
                 if (distances != null && distances.Count > 0)
                 {
                     isIntersect = true;
+                    intersectedRenderer = visibleObject.renderer;
 
                     foreach (float intersectionDistance in distances)
                     {
+                        if (intersectionDistance < 0)
+                        {
+                            throw new Exception($"intersection distance cannot be less than 0; intersectionDistance = {intersectionDistance}");
+                        }
+
                         if (intersectionDistance < minIntersectionDistance)
                         {
                             minIntersectionDistance = intersectionDistance;
-
-                            intersectedRenderer = visibleObject.renderer;
                         }
                     }
                 }

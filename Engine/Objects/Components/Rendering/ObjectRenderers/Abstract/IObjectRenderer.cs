@@ -6,9 +6,13 @@ namespace ConsoleGraphicEngine.Engine.Objects.Components.Rendering.ObjectRendere
 {
     internal interface IObjectRenderer
     {
+        Material material { get; set; }
+
+        Vector3? GetNearestIntersection(Ray ray);
+
         IReadOnlyList<float> GetIntersectionDistances(Ray ray);
 
-        Ray GetNormal(Vector3 position);
+        Ray? GetNormal(Ray ray);
 
         float GetBrightness(Vector3 normalDirection, Vector3 lightDirection);
     }

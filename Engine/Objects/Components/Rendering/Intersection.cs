@@ -1,7 +1,7 @@
 ﻿using ConsoleGraphicEngine.Engine.Objects.Components.Rendering.ObjectRenderers.Abstract;
 using System.Collections.Generic;
 
-namespace ConsoleGraphicEngine.Engine.Tools
+namespace ConsoleGraphicEngine.Engine.Objects.Components.Rendering
 {
     internal struct Intersection
     {
@@ -11,7 +11,7 @@ namespace ConsoleGraphicEngine.Engine.Tools
         public Intersection(in IObjectRenderer intersectedRenderer, float intersectionDistance)
         {
             this.intersectedRenderer = intersectedRenderer;
-            this.intersectionDistance = intersectionDistance; 
+            this.intersectionDistance = intersectionDistance;
         }
     }
 }
