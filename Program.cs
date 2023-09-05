@@ -1,13 +1,18 @@
-﻿using ConsoleGraphicEngine.Engine;
-using ConsoleGraphicEngine.Engine.ConsoleSetter;
+﻿using ConsoleGraphicEngine.Engine.Basic.Components.Rendering;
+using ConsoleGraphicEngine.Engine.Basic.ConsoleSetter;
+using ConsoleGraphicEngine.Engine.Basic.Objects;
+using ConsoleGraphicEngine.Engine.Basic.Tools;
 using ConsoleGraphicEngine.Engine.Objects;
 using ConsoleGraphicEngine.Engine.Objects.Abstract;
-using ConsoleGraphicEngine.Engine.Objects.Components.Rendering;
 using ConsoleGraphicEngine.Engine.Objects.Components.Rendering.Light;
 using ConsoleGraphicEngine.Engine.Objects.Components.Rendering.ObjectRenderers;
-using ConsoleGraphicEngine.Engine.Objects.Components.Rendering.ObjectRenderers.Abstract;
-using ConsoleGraphicEngine.Engine.Objects.Scenes;
-using ConsoleGraphicEngine.Engine.Tools;
+using ConsoleGraphicEngine.Engine.RayTracing;
+using ConsoleGraphicEngine.Engine.RayTracing.Components.Rendering.ObjectRenderers;
+using ConsoleGraphicEngine.Engine.RayTracing.Objects.Abstract;
+using ConsoleGraphicEngine.Engine.RayTracing.Objects.Components.Rendering;
+using ConsoleGraphicEngine.Engine.RayTracing.Objects.Components.Rendering.ObjectRenderers;
+using ConsoleGraphicEngine.Engine.RayTracing.Objects.Components.Rendering.ObjectRenderers.Abstract;
+using ConsoleGraphicEngine.Engine.RayTracing.Objects.Scenes;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -22,26 +27,6 @@ namespace ConsoleGraphicEngine
 
             RayTracingGraphicEngine engine = new RayTracingGraphicEngine(InitializeScene(), 5);
             engine.StartRendering();
-
-            //VisibleObject sphere = new VisibleObject(new SphereObjectRenderer(1), "Sphere");
-            //sphere.transform.position = new Vector3(4, 0, 5);
-
-            //Ray ray = new Ray(new Vector3(1, 0, 4), Vector3.Normalize(new Vector3(1, 0, 0)));
-            //IReadOnlyList<Vector3> intersections = sphere.renderer.Intersect(ray);
-
-            //if (intersections != null)
-            //{
-            //    Console.WriteLine($"Intersecions {intersections.Count}: ");
-
-            //    foreach (Vector3 intersection in intersections)
-            //    {
-            //        Console.WriteLine(intersection);
-            //    }
-            //}
-            //else
-            //{
-            //    Console.WriteLine("No intersecions");
-            //}
         }
 
         private static IScene InitializeScene()
