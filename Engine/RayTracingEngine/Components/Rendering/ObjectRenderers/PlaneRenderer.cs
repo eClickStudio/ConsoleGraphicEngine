@@ -1,13 +1,14 @@
 ﻿using ConsoleGraphicEngine.Engine.Basic.Components.Rendering;
-using ConsoleGraphicEngine.Engine.Objects.Components.Rendering.ObjectRenderers.Abstract;
-using ConsoleGraphicEngine.Engine.Tools;
+using ConsoleGraphicEngine.Engine.RayTracingEngine.Components.Rendering.ObjectRenderers.Abstract;
 using System;
 using System.Collections.Generic;
 
-namespace ConsoleGraphicEngine.Engine.Objects.Components.Rendering.ObjectRenderers
+namespace ConsoleGraphicEngine.Engine.RayTracingEngine.Components.Rendering.ObjectRenderers
 {
     internal class PlaneRenderer : ObjectRenderer
     {
+        //TODO: end this
+
         public PlaneRenderer(Material material) : base(material)
         {
 

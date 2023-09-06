@@ -3,7 +3,7 @@ using ConsoleGraphicEngine.Engine.Basic.Objects;
 
 namespace ConsoleGraphicEngine.Engine.Basic.Components.Abstract
 {
-    interface IComponent : IChangeble, IUpdateble
+    interface IComponent : IChangebleUpdateble
     {
         /// <summary>
         /// The parent object of this component

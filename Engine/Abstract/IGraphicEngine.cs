@@ -1,15 +1,17 @@
-﻿using ConsoleGraphicEngine.Engine.Basic.Components.Rendering;
+﻿using ConsoleGraphicEngine.Engine.Basic.Components.Camera;
+using ConsoleGraphicEngine.Engine.Basic.Components.Rendering;
 using ConsoleGraphicEngine.Engine.Basic.Scenes;
 
 namespace ConsoleGraphicEngine.Engine.Abstract
 {
-    internal interface IGraphicEngine<RendererType>
+    internal interface IGraphicEngine<CameraType, RendererType>
+        where CameraType : class, ICamera
         where RendererType : class, IRenderer
     {
         /// <summary>
         /// Rendering scene
         /// </summary>
-        IScene<RendererType> scene { get; set; }
+        IScene<CameraType, RendererType> scene { get; set; }
 
 
         /// <summary>
@@ -43,6 +45,12 @@ namespace ConsoleGraphicEngine.Engine.Abstract
         /// If real time rendering in progress?
         /// </summary>
         bool isRenderingRealTime { get; }
+
+        /// <summary>
+        /// If true, the screen will be rendered when the scene changes;
+        /// Else the screen will be rendered every frame
+        /// </summary>
+        bool isOptimalRendering { get; set; }
 
         /// <summary>
         /// Start rendering in real time

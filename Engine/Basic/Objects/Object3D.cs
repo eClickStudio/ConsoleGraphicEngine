@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace ConsoleGraphicEngine.Engine.Basic.Objects
 {
-    internal class Object3D : AbstractChangeble, IObject3D
+    internal class Object3D : AbstractChangebleUpdateble, IObject3D
     {
         public ITransform transform { get; }
         public string name { get; set; }
@@ -18,8 +18,9 @@ namespace ConsoleGraphicEngine.Engine.Basic.Objects
             this.name = name;
             components = new List<IComponent>();
 
-            transform = new Transform(parent);
+            changableUpdatebleChildren = components;
 
+            transform = new Transform(parent);
             AddComponent(transform);
         }
 
@@ -31,7 +32,7 @@ namespace ConsoleGraphicEngine.Engine.Basic.Objects
 
         public bool ContainComponents(in IComponent[] components)
         {
-            foreach(IComponent component in components)
+            foreach (IComponent component in components)
             {
                 if (!ContainComponent(component))
                 {
@@ -88,16 +89,16 @@ namespace ConsoleGraphicEngine.Engine.Basic.Objects
         {
             if (!components.Contains(component))
             {
-                component.onChanged += OnChanged;
-
                 components.Add(component);
                 component.parentObject = this;
+
+                OnChanged();
             }
         }
 
         public void AddComponents(in IComponent[] components)
         {
-            foreach ( IComponent component in components)
+            foreach (IComponent component in components)
             {
                 AddComponent(component);
             }
@@ -116,13 +117,13 @@ namespace ConsoleGraphicEngine.Engine.Basic.Objects
                 components.Remove(component);
                 component.parentObject = null;
 
-                component.onChanged -= OnChanged;
+                OnChanged();
             }
         }
 
         public void RemoveComponents(in IComponent[] components)
         {
-            foreach ( IComponent component in components)
+            foreach (IComponent component in components)
             {
                 RemoveComponent(component);
             }
@@ -132,7 +133,5 @@ namespace ConsoleGraphicEngine.Engine.Basic.Objects
         {
             RemoveComponents(components);
         }
-
-        public virtual void Update() { }
     }
 }

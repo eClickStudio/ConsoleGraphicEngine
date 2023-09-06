@@ -1,7 +1,7 @@
 ﻿using System.Numerics;
 using ConsoleGraphicEngine.Engine.Basic.Components.Rendering;
 
-namespace ConsoleGraphicEngine.Engine.Objects.Components.Rendering.ObjectRenderers
+namespace ConsoleGraphicEngine.Engine.RayTracingEngine.Components.Rendering.ObjectRenderers
 {
     internal class CubeRenderer : BoxRenderer
     {

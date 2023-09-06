@@ -1,7 +1,6 @@
-﻿using ConsoleGraphicEngine.Engine.Objects.Components.Rendering.ObjectRenderers.Abstract;
-using System.Collections.Generic;
+﻿using ConsoleGraphicEngine.Engine.RayTracingEngine.Components.Rendering.ObjectRenderers.Abstract;
 
-namespace ConsoleGraphicEngine.Engine.RayTracing.Components.Rendering.ObjectRenderers.Camera
+namespace ConsoleGraphicEngine.Engine.RayTracingEngine.Components.Rendering
 {
     internal struct Intersection
     {

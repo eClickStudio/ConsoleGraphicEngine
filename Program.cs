@@ -1,20 +1,14 @@
-﻿using ConsoleGraphicEngine.Engine.Basic.Components.Rendering;
+﻿using ConsoleGraphicEngine.Engine.Basic.Components.Camera;
+using ConsoleGraphicEngine.Engine.Basic.Components.Rendering;
 using ConsoleGraphicEngine.Engine.Basic.ConsoleSetter;
 using ConsoleGraphicEngine.Engine.Basic.Objects;
+using ConsoleGraphicEngine.Engine.Basic.Scenes;
 using ConsoleGraphicEngine.Engine.Basic.Tools;
-using ConsoleGraphicEngine.Engine.Objects;
-using ConsoleGraphicEngine.Engine.Objects.Abstract;
-using ConsoleGraphicEngine.Engine.Objects.Components.Rendering.Light;
-using ConsoleGraphicEngine.Engine.Objects.Components.Rendering.ObjectRenderers;
-using ConsoleGraphicEngine.Engine.RayTracing;
-using ConsoleGraphicEngine.Engine.RayTracing.Components.Rendering.ObjectRenderers;
-using ConsoleGraphicEngine.Engine.RayTracing.Objects.Abstract;
-using ConsoleGraphicEngine.Engine.RayTracing.Objects.Components.Rendering;
-using ConsoleGraphicEngine.Engine.RayTracing.Objects.Components.Rendering.ObjectRenderers;
-using ConsoleGraphicEngine.Engine.RayTracing.Objects.Components.Rendering.ObjectRenderers.Abstract;
-using ConsoleGraphicEngine.Engine.RayTracing.Objects.Scenes;
+using ConsoleGraphicEngine.Engine.RayTracingEngine;
+using ConsoleGraphicEngine.Engine.RayTracingEngine.Components.Camera;
+using ConsoleGraphicEngine.Engine.RayTracingEngine.Components.Rendering.ObjectRenderers;
+using ConsoleGraphicEngine.Engine.RayTracingEngine.Components.Rendering.ObjectRenderers.Abstract;
 using System;
-using System.Collections.Generic;
 using System.Numerics;
 
 namespace ConsoleGraphicEngine
@@ -25,19 +19,22 @@ namespace ConsoleGraphicEngine
         {
             ConsoleManager.MaximizeConsole();
 
-            RayTracingGraphicEngine engine = new RayTracingGraphicEngine(InitializeScene(), 5);
-            engine.StartRendering();
+            RayTracingGraphicEngine engine = new RayTracingGraphicEngine(5, 3);
+            engine.scene = InitializeScene();
+            engine.StartRenderingRealTime();
         }
 
-        private static IScene InitializeScene()
+        private static IScene<RayTracingCamera, ObjectRenderer> InitializeScene()
         {
+            //TODO: set charSize automaticly
+
             Vector2Int consoleSize = new Vector2Int(Console.WindowWidth, Console.WindowHeight);
             Vector2Int charSize = new Vector2Int(8, 16);
             CameraCharSet charSet = new CameraCharSet(' ',
                     new char[] { '.', ':', '!', '/', '(', 'l', '1', 'Z', '4', 'H', '9', 'W', '8', '$', '@' } );
 
-            IObject3D camera = new Object3D("Camera");
-            camera.AddComponent(new Camera(consoleSize, charSize, 10, 1, charSet));
+            IObject3D camera = new Object3D(null, "Camera");
+            camera.AddComponent(new RayTracingCamera(consoleSize, charSize, 10, 1, charSet));
             //camera.transform.position = new Vector3(10, 0, 0);
             //camera.transform.Rotate(new Vector3(0, 1, 0), -(float)Math.PI / 2);
 

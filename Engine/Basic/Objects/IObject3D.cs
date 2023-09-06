@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace ConsoleGraphicEngine.Engine.Basic.Objects
 {
-    interface IObject3D : IUpdateble
+    interface IObject3D : IChangebleUpdateble
     {
         ITransform transform { get; }
         string name { get; set; }

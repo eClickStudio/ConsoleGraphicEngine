@@ -17,6 +17,14 @@ namespace ConsoleGraphicEngine.Engine.Basic.Components.Transform
             }
             set
             {
+                if (value.X == float.NaN || value.Y == float.NaN || value.Z == float.NaN)
+                {
+                    //TODO: test it Vector3.One * float.NaN
+
+                    throw new ArgumentException($"Position is invalid; " +
+                        $"Position can not be NaN; Value you want to set {value}");
+                }
+
                 if (_position != value)
                 {
                     _position = value;
@@ -68,6 +76,14 @@ namespace ConsoleGraphicEngine.Engine.Basic.Components.Transform
             }
             private set
             {
+                if (value == Vector3.Zero)
+                {
+                    throw new ArgumentException($"Axis is invalid; " +
+                        $"Axis can not be = (0, 0, 0); Value you want to set {value}");
+                }
+
+                value = Vector3.Normalize(value);
+
                 if (_axisX != value) 
                 { 
                     _axisX = value;
@@ -87,6 +103,14 @@ namespace ConsoleGraphicEngine.Engine.Basic.Components.Transform
             }
             private set
             {
+                if (value == Vector3.Zero)
+                {
+                    throw new ArgumentException($"Axis is invalid; " +
+                        $"Axis can not be = (0, 0, 0); Value you want to set {value}");
+                }
+
+                value = Vector3.Normalize(value);
+
                 if (_axisY != value)
                 {
                     _axisY = value;
@@ -106,6 +130,14 @@ namespace ConsoleGraphicEngine.Engine.Basic.Components.Transform
             }
             private set
             {
+                if (value == Vector3.Zero)
+                {
+                    throw new ArgumentException($"Axis is invalid; " +
+                        $"Axis can not be = (0, 0, 0); Value you want to set {value}");
+                }
+
+                value = Vector3.Normalize(value);
+
                 if (_axisZ != value)
                 {
                     _axisZ = value;
@@ -125,7 +157,7 @@ namespace ConsoleGraphicEngine.Engine.Basic.Components.Transform
         public Transform(ITransform parent)
         {
             hierarchy = new HierarchyManager<ITransform>(this, parent);
-            hierarchy.onChanged += () => OnChanged();
+            hierarchy.onHierarchyChanged += () => OnChanged();
 
             axisX = new Vector3(1, 0, 0);
             axisY = new Vector3(0, 1, 0);

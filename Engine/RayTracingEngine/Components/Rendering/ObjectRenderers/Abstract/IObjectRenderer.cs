@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.Numerics;
 
-namespace ConsoleGraphicEngine.Engine.Objects.Components.Rendering.ObjectRenderers.Abstract
+namespace ConsoleGraphicEngine.Engine.RayTracingEngine.Components.Rendering.ObjectRenderers.Abstract
 {
-    internal interface IObjectRenderer
+    internal interface IObjectRenderer : IRenderer
     {
-        Material material { get; set; }
-
         Vector3? GetNearestIntersection(Ray ray);
 
         IReadOnlyList<float> GetIntersectionDistances(Ray ray);

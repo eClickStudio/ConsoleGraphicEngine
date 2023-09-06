@@ -1,6 +1,6 @@
 ﻿using ConsoleGraphicEngine.Engine.Basic.Components.Abstract;
 
-namespace ConsoleGraphicEngine.Engine.Basic.Components.Rendering
+namespace ConsoleGraphicEngine.Engine.Basic.Components.Light
 {
     internal interface ILight : IComponent
     {

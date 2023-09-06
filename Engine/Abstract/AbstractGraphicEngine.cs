@@ -1,13 +1,39 @@
-﻿using ConsoleGraphicEngine.Engine.Basic.Components.Rendering;
+﻿using ConsoleGraphicEngine.Engine.Basic.Components.Camera;
+using ConsoleGraphicEngine.Engine.Basic.Components.Light;
+using ConsoleGraphicEngine.Engine.Basic.Components.Rendering;
 using ConsoleGraphicEngine.Engine.Basic.Scenes;
 using System.Threading.Tasks;
 
 namespace ConsoleGraphicEngine.Engine.Abstract
 {
-    internal abstract class AbstractGraphicEngine<RendererType> : IGraphicEngine<RendererType>
+    internal abstract class AbstractGraphicEngine<CameraType, RendererType> : IGraphicEngine<CameraType, RendererType>
+        where CameraType : class, ICamera
         where RendererType : class, IRenderer
     {
-        public IScene<RendererType> scene { get; set; }
+        private IScene<CameraType, RendererType> _scene;
+
+        public IScene<CameraType, RendererType> scene 
+        { 
+            get
+            {
+                return _scene;
+            }
+            set
+            {
+                _scene = value;
+
+                if (value != null)
+                {
+                    camera = value.mainCamera;
+                    light = value.globalLight;
+
+                    screen = new char[camera.resolution.X * camera.resolution.Y];
+                }
+            }
+        }
+
+        protected CameraType camera;
+        protected IDirectionLight light;
 
         public bool isRenderingRealTime { get; private set; }
 
@@ -28,10 +54,14 @@ namespace ConsoleGraphicEngine.Engine.Abstract
 
         public uint sessionTime { get; private set; }
 
+        public bool isOptimalRendering { get; set; }
+
+        protected char[] screen;
 
         public AbstractGraphicEngine(uint fps = 3)
         {
             this.fps = fps;
+            isOptimalRendering = true;
         }
 
         private void UpdateFrame()
@@ -39,11 +69,12 @@ namespace ConsoleGraphicEngine.Engine.Abstract
             frameNumber++;
             sessionTime += frameTime;
 
-            bool didChange = scene.Update();
-
-            if (didChange)
+            if (scene != null)
             {
-                RenderFrame();
+                if (scene.Update() || !isOptimalRendering)
+                {
+                    RenderFrame();
+                }
             }
         }
 

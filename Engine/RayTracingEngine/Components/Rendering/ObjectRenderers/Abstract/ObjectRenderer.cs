@@ -1,15 +1,14 @@
-﻿using ConsoleGraphicEngine.Engine.Basic.Components.Rendering;
-using ConsoleGraphicEngine.Engine.Objects.Components.Abstract;
-using ConsoleGraphicEngine.Engine.Tools;
+﻿using ConsoleGraphicEngine.Engine.Basic.Components.Abstract;
+using ConsoleGraphicEngine.Engine.Basic.Components.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
 
-namespace ConsoleGraphicEngine.Engine.Objects.Components.Rendering.ObjectRenderers.Abstract
+namespace ConsoleGraphicEngine.Engine.RayTracingEngine.Components.Rendering.ObjectRenderers.Abstract
 {
-    internal abstract class ObjectRenderer : Component, IObjectRenderer
+    internal abstract class ObjectRenderer : AbstractComponent, IObjectRenderer
     {
-        protected const float _RAY_STEP = 0.01f;
+        protected const float _MIN_RAY_STEP = 0.01f;
 
         public Material material { get; set; }
 

@@ -1,26 +1,24 @@
-﻿using ConsoleGraphicEngine.Engine.Basic.Components.Abstract;
+﻿using ConsoleGraphicEngine.Engine.Basic.Abstract;
+using ConsoleGraphicEngine.Engine.Basic.Components.Abstract;
+using ConsoleGraphicEngine.Engine.Basic.Components.Camera;
+using ConsoleGraphicEngine.Engine.Basic.Components.Light;
 using ConsoleGraphicEngine.Engine.Basic.Components.Rendering;
+using ConsoleGraphicEngine.Engine.Basic.Components.Transform;
 using ConsoleGraphicEngine.Engine.Basic.Objects;
 using System.Collections.Generic;
 
 namespace ConsoleGraphicEngine.Engine.Basic.Scenes
 {
-    interface IScene<RendererType>
+    interface IScene<CameraType, RendererType> : IChangebleUpdateble
+        where CameraType : class, ICamera
         where RendererType : class, IRenderer
     {
-        ICamera mainCamera { get; }
-        ILight globalLight { get; }
+        CameraType mainCamera { get; }
+        IDirectionLight globalLight { get; }
 
         IReadOnlyList<IObject3D> objects { get; }
 
         IReadOnlyList<RendererType> renderers { get; }
-
-
-        /// <summary>
-        /// Updates all objects
-        /// </summary>
-        /// <returns>If there is some changes on the scene?</returns>
-        bool Update();
 
         /// <summary>
         /// Is there object on the scene

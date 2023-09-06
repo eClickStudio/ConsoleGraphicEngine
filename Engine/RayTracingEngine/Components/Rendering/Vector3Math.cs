@@ -1,4 +1,7 @@
-﻿namespace System.Numerics
+﻿using System;
+using System.Numerics;
+
+namespace ConsoleGraphicEngine.Engine.RayTracingEngine.Components.Rendering
 {
     public static class Vector3Math
     {

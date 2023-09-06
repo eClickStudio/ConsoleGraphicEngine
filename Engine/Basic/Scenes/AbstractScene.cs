@@ -4,16 +4,17 @@ using ConsoleGraphicEngine.Engine.Basic.Components.Rendering;
 using ConsoleGraphicEngine.Engine.Basic.Objects;
 using System;
 using System.Collections.Generic;
-
-using ConsoleGraphicEngine.Engine.Objects
+using ConsoleGraphicEngine.Engine.Basic.Components.Light;
+using ConsoleGraphicEngine.Engine.Basic.Components.Camera;
 
 namespace ConsoleGraphicEngine.Engine.Basic.Scenes
 {
-    internal abstract class AbstractScene<RendererType> : IScene<RendererType>
+    internal abstract class AbstractScene<CameraType, RendererType> : AbstractChangebleUpdateble, IScene<CameraType, RendererType>
+        where CameraType : class, ICamera
         where RendererType : class, IRenderer
     {
-        public ICamera mainCamera { get; private set; }
-        public ILight globalLight { get; private set; }
+        public CameraType mainCamera { get; private set; }
+        public IDirectionLight globalLight { get; private set; }
 
 
         private List<IObject3D> _objects { get; }
@@ -23,32 +24,27 @@ namespace ConsoleGraphicEngine.Engine.Basic.Scenes
 
         public IReadOnlyList<RendererType> renderers => _renderers;
 
-        public AbstractScene(ICamera camera, ILight light)
+
+        public AbstractScene(CameraType camera, IDirectionLight light)
         {
+            if (camera == null)
+            {
+                throw new ArgumentException("Scene main camera can not be null");
+            }
+            if (light == null)
+            {
+                throw new ArgumentException("Scene global light can not be null");
+            }
+
             _objects = new List<IObject3D>();
             _renderers = new List<RendererType>();
+
+            changableUpdatebleChildren = _objects;
 
             mainCamera = camera;
             globalLight = light;
 
             AddObjects(camera.parentObject, light.parentObject);
-        }
-
-        public bool Update()
-        {
-            bool didUpdate = false;
-
-            foreach (IChangebleUpdateble someObject in _objects)
-            {
-                someObject.Update();
-
-                if (someObject.CheckChanges())
-                {
-                    didUpdate = true;
-                }
-            }
-
-            return didUpdate;
         }
 
 
@@ -77,6 +73,11 @@ namespace ConsoleGraphicEngine.Engine.Basic.Scenes
 
         public void AddObject(in IObject3D object3D)
         {
+            if (object3D == null)
+            {
+                throw new ArgumentException("You can not add null object");
+            }
+
             if (!ContainObject(object3D))
             {
                 _objects.Add(object3D);
@@ -85,6 +86,8 @@ namespace ConsoleGraphicEngine.Engine.Basic.Scenes
                 {
                     _renderers.Add(renderer);
                 }
+
+                OnChanged();
             }
         }
 
@@ -107,6 +110,11 @@ namespace ConsoleGraphicEngine.Engine.Basic.Scenes
 
         public void RemoveObject(in IObject3D object3D)
         {
+            if (object3D == null)
+            {
+                throw new ArgumentException("You can not remove null object");
+            }
+
             if (ContainObject(object3D))
             {
                 _objects.Remove(object3D);
@@ -115,6 +123,8 @@ namespace ConsoleGraphicEngine.Engine.Basic.Scenes
                 {
                     _renderers.Remove(visibleObject);
                 }
+
+                OnChanged();
             }
         }
 

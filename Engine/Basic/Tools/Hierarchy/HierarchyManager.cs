@@ -10,13 +10,14 @@ namespace ConsoleGraphicEngine.Engine.Basic.Tools.Hierarchy
         public T parent { get; private set; }
 
         private List<T> _children;
+
         public IReadOnlyList<T> children => _children;
 
         public int childrenCount => _children.Count;
 
-        public int hierarchyIndex => parent.hierarchy.IndexOfChild(_hierarchyParent).Value;
+        public int indexInHierarchy => parent.hierarchy.IndexOfChild(_hierarchyParent).Value;
 
-        public event Action onChanged;
+        public event Action onHierarchyChanged;
 
         public HierarchyManager(in T hierarchyParent, in T parent)
         {
@@ -33,28 +34,19 @@ namespace ConsoleGraphicEngine.Engine.Basic.Tools.Hierarchy
                 _children.Add(child);
                 child.hierarchy.SetParent(_hierarchyParent);
 
-                onChanged?.Invoke();
+                onHierarchyChanged?.Invoke();
             }
         }
 
         public void AddChildren(in T[] children)
         {
-            bool didChange = false;
-
             foreach (T child in children)
             {
                 if (!HasChild(child))
                 {
-                    didChange = true;
-
                     _children.Add(child);
                     child.hierarchy.SetParent(_hierarchyParent);
                 }
-            }
-
-            if (didChange)
-            {
-                onChanged?.Invoke();
             }
         }
 
@@ -84,7 +76,7 @@ namespace ConsoleGraphicEngine.Engine.Basic.Tools.Hierarchy
             {
                 _children.Remove(child);
 
-                onChanged?.Invoke();
+                onHierarchyChanged?.Invoke();
             }
         }
 
@@ -93,8 +85,8 @@ namespace ConsoleGraphicEngine.Engine.Basic.Tools.Hierarchy
             if (childrenCount > index)
             {
                 _children.RemoveAt(index);
-                    
-                onChanged?.Invoke();
+
+                onHierarchyChanged?.Invoke();
             }
         }
 
@@ -104,7 +96,7 @@ namespace ConsoleGraphicEngine.Engine.Basic.Tools.Hierarchy
             {
                 this.parent = parent;
 
-                onChanged?.Invoke();
+                onHierarchyChanged?.Invoke();
             }
         }
     }

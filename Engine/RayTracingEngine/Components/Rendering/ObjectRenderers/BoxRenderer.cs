@@ -1,14 +1,15 @@
 ﻿using ConsoleGraphicEngine.Engine.Basic.Components.Rendering;
-using ConsoleGraphicEngine.Engine.Objects.Components.Rendering.ObjectRenderers.Abstract;
-using ConsoleGraphicEngine.Engine.Tools;
+using ConsoleGraphicEngine.Engine.RayTracingEngine.Components.Rendering.ObjectRenderers.Abstract;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
 
-namespace ConsoleGraphicEngine.Engine.Objects.Components.Rendering.ObjectRenderers
+namespace ConsoleGraphicEngine.Engine.RayTracingEngine.Components.Rendering.ObjectRenderers
 {
     internal class BoxRenderer : ObjectRenderer
     {
+        //TODO: using rotation to intersect
+
         public Vector3 size { get; }
 
         public BoxRenderer(Material material, Vector3 size) : base(material)
@@ -71,7 +72,7 @@ namespace ConsoleGraphicEngine.Engine.Objects.Components.Rendering.ObjectRendere
             Vector3 zxy = new Vector3(t1.Z, t1.X, t1.Y);
             direction = -Vector3Math.Sign(ray.direction) * Vector3Math.Step(yzx, t1) * Vector3Math.Step(zxy, t1);
 
-            return new Ray(nearestIntersection.Value + direction * _RAY_STEP, direction);
+            return new Ray(nearestIntersection.Value + direction * _MIN_RAY_STEP, direction);
         }
     }
 }

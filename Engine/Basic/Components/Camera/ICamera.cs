@@ -2,7 +2,7 @@
 using ConsoleGraphicEngine.Engine.Basic.Tools;
 using System.Numerics;
 
-namespace ConsoleGraphicEngine.Engine.Basic.Components.Rendering
+namespace ConsoleGraphicEngine.Engine.Basic.Components.Camera
 {
     internal interface ICamera : IComponent
     {
@@ -12,14 +12,9 @@ namespace ConsoleGraphicEngine.Engine.Basic.Components.Rendering
         Vector2Int resolution { get; }
 
         /// <summary>
-        /// How much chars must be in one unit?
+        /// How much chars must be in one unit? Min = 1
         /// </summary>
         public float charsPerUnit { get; set; }
-
-        /// <summary>
-        /// Size of screen in world space; Size of screen in units
-        /// </summary>
-        Vector2 screenWorldSize { get; }
 
         /// <summary>
         /// Angular space in Radians visible to the camera. Max 2*PI

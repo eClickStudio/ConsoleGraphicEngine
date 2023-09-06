@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Numerics;
 
-namespace ConsoleGraphicEngine.Engine.Basic.Tools
+namespace ConsoleGraphicEngine.Engine.RayTracingEngine.Components.Rendering
 {
     internal struct Ray
     {
@@ -59,6 +59,18 @@ namespace ConsoleGraphicEngine.Engine.Basic.Tools
         public override string ToString()
         {
             return $"{origin}; {direction}";
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Ray ray &&
+                   origin.Equals(ray.origin) &&
+                   _direction.Equals(ray._direction);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(origin, _direction);
         }
     }
 }

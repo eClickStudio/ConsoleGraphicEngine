@@ -4,7 +4,7 @@ using System;
 
 namespace ConsoleGraphicEngine.Engine.Basic.Components.Abstract
 {
-    internal abstract class AbstractComponent : AbstractChangeble, IComponent
+    internal abstract class AbstractComponent : AbstractChangebleUpdateble, IComponent
     {
 
         private IObject3D _parentObject;
@@ -17,11 +17,6 @@ namespace ConsoleGraphicEngine.Engine.Basic.Components.Abstract
             }
             set
             {
-                if (parentObject == null)
-                {
-                    throw new ArgumentException("Component can not be attached to null object!");
-                }
-
                 if (_parentObject != value)
                 {
                     _parentObject = value;
@@ -37,7 +32,5 @@ namespace ConsoleGraphicEngine.Engine.Basic.Components.Abstract
         /// Triggers on attached to another object
         /// </summary>
         protected event Action<IObject3D> attachedToObject;
-
-        public virtual void Update() { }
     }
 }

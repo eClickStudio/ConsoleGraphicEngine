@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ConsoleGraphicEngine.Engine.Basic.Components.Rendering
+namespace ConsoleGraphicEngine.Engine.Basic.Components.Camera
 {
     internal struct CameraCharSet
     {

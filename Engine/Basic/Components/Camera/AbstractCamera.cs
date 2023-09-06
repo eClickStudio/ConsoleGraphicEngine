@@ -3,7 +3,7 @@ using ConsoleGraphicEngine.Engine.Basic.Tools;
 using System;
 using System.Numerics;
 
-namespace ConsoleGraphicEngine.Engine.Basic.Components.Rendering
+namespace ConsoleGraphicEngine.Engine.Basic.Components.Camera
 {
     internal class AbstractCamera : AbstractComponent, ICamera
     {
@@ -23,6 +23,12 @@ namespace ConsoleGraphicEngine.Engine.Basic.Components.Rendering
             }
             set
             {
+                if (value < 1)
+                {
+                    throw new ArgumentException($"Chars per unit is invalid; " +
+                        $"Value can not be < 1; Value you want to set {value}");
+                }
+
                 if (_charsPerUnit != value)
                 {
                     _charsPerUnit = value;
@@ -31,8 +37,6 @@ namespace ConsoleGraphicEngine.Engine.Basic.Components.Rendering
                 }
             }
         }
-
-        public Vector2 screenWorldSize => resolution / charsPerUnit;
 
 
         private Vector2 MIN_CAMERA_ANGLE { get; } = Vector2.Zero;
@@ -47,8 +51,13 @@ namespace ConsoleGraphicEngine.Engine.Basic.Components.Rendering
             } 
             set
             {
-                if (_cameraAngle != value 
-                    && value == Vector2.Clamp(value, MIN_CAMERA_ANGLE, MAX_CAMERA_ANGLE))
+                if (value != Vector2.Clamp(value, MIN_CAMERA_ANGLE, MAX_CAMERA_ANGLE))
+                {
+                    throw new ArgumentException($"Camera angle is invalid; " +
+                        $"Min = {MIN_CAMERA_ANGLE}; Max = {MAX_CAMERA_ANGLE}; Value you want to set {value}");
+                }
+
+                if (_cameraAngle != value)
                 {
                     _cameraAngle = value;
 

@@ -8,7 +8,7 @@ namespace ConsoleGraphicEngine.Engine.Basic.Tools.Hierarchy
     /// The hierarchy interface
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    internal interface IHierarchyManager<T> : IChangeble
+    internal interface IHierarchyManager<T>
         where T : class, IHierarchyMember<T>
     {
         /// <summary>
@@ -25,6 +25,11 @@ namespace ConsoleGraphicEngine.Engine.Basic.Tools.Hierarchy
         /// The count of childs
         /// </summary>
         int childrenCount { get; }
+
+        /// <summary>
+        /// Triggers on some changes in hierarchy
+        /// </summary>
+        event Action onHierarchyChanged;
 
         /// <summary>
         /// Gets the childIndex
@@ -67,7 +72,7 @@ namespace ConsoleGraphicEngine.Engine.Basic.Tools.Hierarchy
         /// <summary>
         /// The index in parent hierarchy
         /// </summary>
-        int hierarchyIndex { get; }
+        int indexInHierarchy { get; }
 
         /// <summary>
         /// Cheks if its the child of some parent

@@ -1,11 +1,10 @@
 ﻿using ConsoleGraphicEngine.Engine.Basic.Components.Rendering;
-using ConsoleGraphicEngine.Engine.Objects.Components.Rendering.ObjectRenderers.Abstract;
-using ConsoleGraphicEngine.Engine.Tools;
+using ConsoleGraphicEngine.Engine.RayTracingEngine.Components.Rendering.ObjectRenderers.Abstract;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
 
-namespace ConsoleGraphicEngine.Engine.Objects.Components.Rendering.ObjectRenderers
+namespace ConsoleGraphicEngine.Engine.RayTracingEngine.Components.Rendering.ObjectRenderers
 {
     class SphereRenderer : ObjectRenderer
     {
@@ -104,7 +103,7 @@ namespace ConsoleGraphicEngine.Engine.Objects.Components.Rendering.ObjectRendere
                 throw new ArgumentException("Incorrect position");
             }
 
-            return new Ray(nearestIntersection.Value + direction * _RAY_STEP, direction);
+            return new Ray(nearestIntersection.Value + direction * _MIN_RAY_STEP, direction);
         }
     }
 }
