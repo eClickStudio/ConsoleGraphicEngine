@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "ConsoleGraphicEngine": {
+      "commandName": "Project"
+    },
+    "Профиль 1": {
+      "commandName": "Executable",
+      "executablePath": "D:\\Пользователь\\Другие файлы\\Скрипты\\С#\\ConsoleGraphicEngine\\ConsoleRayTracingRenderer\\bin\\Debug\\net6.0\\ConsoleRayTracingRenderer.exe"
+    }
+  }
+}
