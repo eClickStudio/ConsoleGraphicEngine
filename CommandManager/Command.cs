@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Commands.Abstract;
+using System;
 
 namespace Commands
 {

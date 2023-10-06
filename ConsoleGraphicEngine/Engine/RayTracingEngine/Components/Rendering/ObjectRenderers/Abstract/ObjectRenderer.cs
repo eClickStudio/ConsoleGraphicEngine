@@ -22,8 +22,10 @@ namespace ConsoleGraphicEngine3D.Engine.RayTracingEngine.Components.Rendering.Ob
             lightDirection = Vector3.Normalize(lightDirection);
             normalDirection = Vector3.Normalize(normalDirection);
 
+            //TODO: real light color use all material coeff
+
             return Math.Clamp(
-                (1 - Vector3.Dot(normalDirection, lightDirection)) * Material.Brightness + Material.Glow,
+                (1 - Vector3.Dot(normalDirection, lightDirection)) * Material.AbsorptionRate,
                 0, 1);
         }
 

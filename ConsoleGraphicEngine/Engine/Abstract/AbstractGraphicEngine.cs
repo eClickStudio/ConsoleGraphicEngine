@@ -83,14 +83,16 @@ namespace ConsoleGraphicEngine3D.Engine.Abstract
 
         public abstract void RenderFrame();
 
-        public void StartRenderingRealTime()
+        public async void StartRenderingRealTime()
         {
             IsRenderingRealTime = true;
 
-            _renderingRealTimeTask = Task.Run(() => RenderingRealTime());
+            _renderingRealTimeTask = RenderingRealTime();
+
+            await _renderingRealTimeTask;
         }
 
-        private async void RenderingRealTime()
+        private async Task RenderingRealTime()
         {
             while (IsRenderingRealTime)
             {

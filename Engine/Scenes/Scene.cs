@@ -2,6 +2,7 @@
 using Engine3D.Components.Abstract;
 using Engine3D.Components.Transform;
 using Engine3D.Objects;
+using Hierarchy;
 using System;
 using System.Collections.Generic;
 
@@ -9,15 +10,23 @@ namespace Engine3D.Scenes
 {
     public class Scene : AbstractChangebleUpdateble, IScene
     {
+        //TODO: test scene transform. If sceneTransform changes triggers onChanged
+
+        public ITransform SceneTransform { get; }
+
         protected List<IObject3D> AttachedObjects { get; }
 
         public IReadOnlyList<IObject3D> Objects => AttachedObjects;
+
 
         public Scene()
         {
             AttachedObjects = new List<IObject3D>();
 
             ChangableUpdatebleChildren = AttachedObjects;
+
+            SceneTransform = new Transform(null);
+            SceneTransform.HierarchyName = "Scene";
         }
 
 
@@ -49,7 +58,7 @@ namespace Engine3D.Scenes
             return ContainObjectsArray(objects3D);
         }
 
-
+        //TODO: test to add hierarchy chain in every cases
         public virtual void AddObject(in IObject3D object3D)
         {
             if (object3D == null)
@@ -62,14 +71,14 @@ namespace Engine3D.Scenes
                 AttachedObjects.Add(object3D);
 
                 ITransform transform = object3D.ThisTransform;
-                
-                if (transform.ParentObject != null &&
-                    !ContainObject(transform.ParentObject))
+                IHierarchyManager<ITransform> hierarchy = transform.Hierarchy;
+
+                if (hierarchy.Parent == null || !ContainObject(hierarchy.Parent.ParentObject))
                 {
-                    transform.ParentObject = null;
+                    SceneTransform.Hierarchy.AddChild(transform);
                 }
 
-                foreach (ITransform child in transform.Hierarchy.Children)
+                foreach (ITransform child in hierarchy.Children)
                 {
                     AddObject(child.ParentObject);
                 }
@@ -96,7 +105,7 @@ namespace Engine3D.Scenes
             AddObjectsArray(objects3D);
         }
 
-
+        //TODO: test to remove hierarchu chain in every case
         public virtual void RemoveObject(in IObject3D object3D)
         {
             if (object3D == null)
@@ -108,7 +117,15 @@ namespace Engine3D.Scenes
             {
                 AttachedObjects.Remove(object3D);
 
-                foreach (ITransform child in object3D.ThisTransform.Hierarchy.Children)
+                ITransform transform = object3D.ThisTransform;
+                IHierarchyManager<ITransform> hierarchy = transform.Hierarchy;
+
+                if (hierarchy.IsChildOf(SceneTransform))
+                {
+                    SceneTransform.Hierarchy.RemoveChild(transform);
+                }
+
+                foreach (ITransform child in hierarchy.Children)
                 {
                     RemoveObject(child.ParentObject);
                 }

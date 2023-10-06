@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace Commands
+namespace Commands.Abstract
 {
-    public interface ICommandManager
+    public interface ICommandHandler
     {
         /// <summary>
         /// Handle help command

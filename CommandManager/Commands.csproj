@@ -7,8 +7,8 @@
     <ProjectGuid>{32C01112-CD63-4574-9ED5-30DDBF6A4776}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CommandManager</RootNamespace>
-    <AssemblyName>CommandManager</AssemblyName>
+    <RootNamespace>Commands</RootNamespace>
+    <AssemblyName>Commands</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -42,10 +42,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Command.cs" />
-    <Compile Include="ICommand.cs" />
+    <Compile Include="Abstract\ICommandManager.cs" />
     <Compile Include="CommandManager.cs" />
-    <Compile Include="ICommandManager.cs" />
+    <Compile Include="ConsoleColorSet.cs" />
+    <Compile Include="Abstract\ICommand.cs" />
+    <Compile Include="CommandHandler.cs" />
+    <Compile Include="Abstract\ICommandHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

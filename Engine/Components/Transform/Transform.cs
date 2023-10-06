@@ -3,6 +3,7 @@ using System;
 using Hierarchy;
 using Engine3D.Components.Abstract;
 using Quaternion = Math3D.Quaternion;
+using Engine3D.Objects;
 
 namespace Engine3D.Components.Transform
 {
@@ -155,7 +156,10 @@ namespace Engine3D.Components.Transform
             }
         }
 
+        public string HierarchyName { get; set; }
+
         public IHierarchyManager<ITransform> Hierarchy { get; }
+
 
         public event Action onPositionChangedEvent;
         public event Action OnRotationChangedEvent;
@@ -166,9 +170,19 @@ namespace Engine3D.Components.Transform
             Hierarchy = new HierarchyManager<ITransform>(this, parent);
             Hierarchy.OnHierarchyChangedEvent += () => OnChanged();
 
+            OnAttachedToObjectEvent += ChangeHierarchyName;
+
             AxisX = new Vector3(1, 0, 0);
             AxisY = new Vector3(0, 1, 0);
             AxisZ = new Vector3(0, 0, 1);
+        }
+
+        private void ChangeHierarchyName(IObject3D object3D)
+        {
+            if (string.IsNullOrEmpty(HierarchyName))
+            {
+                HierarchyName = object3D.Name;
+            }
         }
 
         //TODO: test rotations and hierarchy

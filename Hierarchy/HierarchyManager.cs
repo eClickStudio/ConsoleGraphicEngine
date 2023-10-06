@@ -6,6 +6,9 @@ namespace Hierarchy
     public class HierarchyManager<T> : IHierarchyManager<T>
         where T : class, IHierarchyMember<T>
     {
+        /// <summary>
+        /// This hierarchy member
+        /// </summary>
         protected T HierarchyParent { get; }
         public T Parent { get; private set; }
 
@@ -75,6 +78,7 @@ namespace Hierarchy
             if (HasChild(child))
             {
                 _children.Remove(child);
+                child.Hierarchy.SetParent(null);
 
                 OnHierarchyChangedEvent?.Invoke();
             }
@@ -97,6 +101,32 @@ namespace Hierarchy
                 Parent = parent;
 
                 OnHierarchyChangedEvent?.Invoke();
+            }
+        }
+
+        public void PrintHierarchy()
+        {
+            Console.WriteLine($"{HierarchyParent.HierarchyName}:");
+
+            PrintChildren(Children, 0);
+        }
+
+        private void PrintChildren(in IReadOnlyList<T> children, int depth)
+        {
+            foreach (T child in children)
+            {
+                Console.Write($"{new string ('\t', depth)} * {child.HierarchyName}");
+
+                if  (child.Hierarchy.ChildrenCount > 0)
+                {
+                    Console.WriteLine(":");
+
+                    PrintChildren(child.Hierarchy.Children, depth + 1);
+                }
+                else
+                {
+                    Console.WriteLine();
+                }
             }
         }
     }

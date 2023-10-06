@@ -1,10 +1,8 @@
 ﻿using ConsoleGraphicEngine3D.Engine.Basic.Components.Camera;
 using ConsoleGraphicEngine3D.Engine.Basic.Components.Light;
 using ConsoleGraphicEngine3D.Engine.Basic.Components.Rendering;
-using Engine3D.Components.Transform;
 using Engine3D.Objects;
 using Engine3D.Scenes;
-using System;
 using System.Collections.Generic;
 
 namespace ConsoleGraphicEngine3D.Engine.Basic.Scenes
@@ -28,60 +26,28 @@ namespace ConsoleGraphicEngine3D.Engine.Basic.Scenes
 
         public override void AddObject(in IObject3D object3D)
         {
-            if (object3D == null)
+            if (object3D != null && !ContainObject(object3D))
             {
-                throw new ArgumentException("You can not add null object");
-            }
-
-            if (!ContainObject(object3D))
-            {
-                AttachedObjects.Add(object3D);
-
-                if (object3D is RendererType renderer)
+                if (object3D.TryGetComponent(out RendererType renderer))
                 {
                     ObjectRenderers.Add(renderer);
                 }
-
-                ITransform transform = object3D.ThisTransform;
-
-                if (transform.ParentObject != null &&
-                    !ContainObject(transform.ParentObject))
-                {
-                    transform.ParentObject = null;
-                }
-
-                foreach (ITransform child in transform.Hierarchy.Children)
-                {
-                    AddObject(child.ParentObject);
-                }
-
-                OnChanged();
             }
+
+            base.AddObject(object3D);
         }
 
         public override void RemoveObject(in IObject3D object3D)
         {
-            if (object3D == null)
+            if (object3D != null && ContainObject(object3D))
             {
-                throw new ArgumentException("You can not remove null object");
-            }
-
-            if (ContainObject(object3D))
-            {
-                AttachedObjects.Remove(object3D);
-
-                if (object3D is RendererType renderer)
+                if (object3D.TryGetComponent(out RendererType renderer))
                 {
                     ObjectRenderers.Remove(renderer);
                 }
-
-                foreach (ITransform child in object3D.ThisTransform.Hierarchy.Children)
-                {
-                    RemoveObject(child.ParentObject);
-                }
-
-                OnChanged();
             }
+
+            base.RemoveObject(object3D);
         }
     }
 }

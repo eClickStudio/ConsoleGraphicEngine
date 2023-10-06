@@ -13,14 +13,14 @@ namespace Engine3D.Objects
 
         protected readonly List<IComponent> Components;
 
-        public Object3D(in ITransform parent, string name = "noname_object")
+        public Object3D(string name = "noname_object")
         {
             this.Name = name;
             Components = new List<IComponent>();
 
             ChangableUpdatebleChildren = Components;
 
-            ThisTransform = new Transform(parent);
+            ThisTransform = new Transform(null);
             AddComponent(ThisTransform);
         }
 

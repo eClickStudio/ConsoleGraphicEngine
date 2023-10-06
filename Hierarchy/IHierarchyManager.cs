@@ -84,5 +84,10 @@ namespace Hierarchy
         /// Set the parent. If parent argument is null this will not be the child
         /// </summary>
         void SetParent(in T parent);
+
+        /// <summary>
+        /// Prints hierarchy to the console. Cannot print parents (prints only children)
+        /// </summary>
+        void PrintHierarchy();
     }
 }

@@ -1,150 +1,38 @@
-﻿using System;
-using System.Collections.Generic;
+﻿//using Commands.Abstract;
+//using System;
+//using System.Threading.Tasks;
 
-namespace Commands
-{
-    public class CommandManager : ICommandManager
-    {
-        private Dictionary<string, ICommand> _commands { get; }
-        private ICommand _helpCommand { get; }
+//namespace Commands
+//{
+//    internal class CommandManager : CommandHandler, ICommandManager
+//    { 
+//        private Task _handlingTask;
 
-        public CommandManager()
-        {
-            _helpCommand = new Command("Write all admissible commands with discriptions to the console.", ShowAllCommands);
+//        public bool IsHandling { get; private set; }
 
-            _commands = new Dictionary<string, ICommand>()
-            {
-                { "help", _helpCommand },
-            };
-        }
+//        public CommandManager(ConsoleColorSet colorSet) : base(colorSet)
+//        {
+//            AddCommand("stophandling", new Command("Stops commands handling", async () => await StopHandlingCommands()));
+//        }
 
+//        public Task StartHandlingCommands()
+//        {
+//            _handlingTask = Task.Run(() => { });
+//        }
 
-        public void Help()
-        {
-            _helpCommand.Execute();
-        }
+//        private async Task HandlingCommands()
+//        {
+//            while (IsHandling)
+//            {
+//                await Console.ReadLine();
+//            }
+//        }
 
-        public void HandleCommand(string commandKey)
-        {
-            if (_commands.ContainsKey(commandKey))
-            {
-                _commands[commandKey].Execute();
-            }
-            else
-            {
-                throw new ArgumentException($"Command you want to execute is not exist! Command key = {commandKey}");
-            }
-        }
+//        public async Task StopHandlingCommands()
+//        {
+//            IsHandling = false;
 
-        private void ShowAllCommands()
-        {
-            foreach (KeyValuePair<string, ICommand> pair in _commands)
-            {
-                Console.WriteLine($"{pair.Key} - {pair.Value.description}");
-            }
-        }
-
-
-        public bool ContainCommand(in string commandKey)
-        {
-            return _commands.ContainsKey(commandKey);
-        }
-
-        private bool ContainCommandsArray(in string[] commandKeys)
-        {
-            foreach (string key in commandKeys)
-            {
-                if (!ContainCommand(key))
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        public bool ContainCommands(in string[] commandKeys)
-        {
-            return ContainCommandsArray(commandKeys);
-        }
-
-        public bool ContainCommands(params string[] commandKeys)
-        {
-            return ContainCommandsArray(commandKeys);
-        }
-
-        public bool ContainCommand(in ICommand command)
-        {
-            return _commands.ContainsValue(command);
-        }
-
-        private bool ContainCommandsArray(in ICommand[] commandKeys)
-        {
-            foreach (ICommand key in commandKeys)
-            {
-                if (!ContainCommand(key))
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        public bool ContainCommands(in ICommand[] commands)
-        {
-            return ContainCommandsArray(commands);
-        }
-
-        public bool ContainCommands(params ICommand[] commands)
-        {
-            return ContainCommandsArray(commands);
-        }
-
-
-        public void AddCommand(in string key, in ICommand command)
-        {
-            _commands.Add(key, command);
-        }
-
-        public void AddCommands(in IReadOnlyDictionary<string, ICommand> commands)
-        {
-            foreach (KeyValuePair<string, ICommand> pair in commands)
-            {
-                _commands.Add(pair.Key, pair.Value);
-            }
-        }
-
-
-        public void RemoveCommand(in string commandKey)
-        {
-            if (commandKey == "help")
-            {
-                throw new ArgumentException("You can not remove help command!");
-            }
-
-            if (ContainCommand(commandKey))
-            {
-                _commands.Remove(commandKey);
-            }
-        }
-
-        private void RemoveCommandsArray(in string[] commandKeys)
-        {
-            foreach (string key in commandKeys)
-            {
-                RemoveCommand(key);
-            }
-        }
-
-        public void RemoveCommands(in string[] commandKeys)
-        {
-            RemoveCommandsArray(commandKeys);
-        }
-
-        public void RemoveCommands(params string[] commandKeys)
-        {
-            RemoveCommandsArray(commandKeys);
-        }
-    }
-}
+//            await _handlingTask;
+//        }
+//    }
+//}

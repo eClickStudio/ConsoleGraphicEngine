@@ -1,5 +1,6 @@
 ﻿using Engine3D.ChangeTriggers;
 using Engine3D.Components.Abstract;
+using Engine3D.Components.Transform;
 using Engine3D.Objects;
 using System.Collections.Generic;
 
@@ -7,6 +8,11 @@ namespace Engine3D.Scenes
 {
     public interface IScene : IChangebleUpdateble
     {
+        /// <summary>
+        /// Transform of this scene
+        /// </summary>
+        ITransform SceneTransform { get; }
+
         /// <summary>
         /// All scene objects
         /// </summary>
