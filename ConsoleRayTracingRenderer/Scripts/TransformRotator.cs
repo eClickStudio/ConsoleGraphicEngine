@@ -53,7 +53,7 @@ namespace ConsoleRayTracingRenderer.Scripts
         {
             float angularOffset = (float)frameTime / 1000 * (float)Math.PI / 180 * _speed;
 
-            Rotate(ParentObject.ThisTransform, angularOffset);
+            Rotate(ParentObject.Transform, angularOffset);
         }
 
         private void Rotate(ITransform transform, float angularOffset)

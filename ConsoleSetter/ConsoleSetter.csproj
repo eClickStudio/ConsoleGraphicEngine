@@ -4,12 +4,12 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{E49D18FE-741A-445C-8E31-88987D309050}</ProjectGuid>
+    <ProjectGuid>{179471F6-7BCC-4051-975F-C827247AB97C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Engine3D</RootNamespace>
-    <AssemblyName>Engine3D</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <RootNamespace>ConsoleSetter</RootNamespace>
+    <AssemblyName>ConsoleSetter</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
@@ -31,12 +31,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Bcl.HashCode, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\ConsoleGraphicEngine\packages\Microsoft.Bcl.HashCode.1.1.1\lib\net461\Microsoft.Bcl.HashCode.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Numerics" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -45,30 +41,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChangeTriggers\AbstractChangebleUpdateble.cs" />
-    <Compile Include="ChangeTriggers\IChangebleUpdateble.cs" />
-    <Compile Include="Components\Abstract\AbstractComponent.cs" />
-    <Compile Include="Components\Abstract\IComponent.cs" />
-    <Compile Include="Components\Transform\ITransform.cs" />
-    <Compile Include="Components\Transform\Transform.cs" />
-    <Compile Include="Objects\IObject3D.cs" />
-    <Compile Include="Objects\Object3D.cs" />
+    <Compile Include="ConsoleManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Scenes\IScene.cs" />
-    <Compile Include="Scenes\Scene.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Hierarchy\Hierarchy.csproj">
-      <Project>{199c9dd1-e266-4479-9189-68b2666205b3}</Project>
-      <Name>Hierarchy</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MathExtension\MathExtensions.csproj">
-      <Project>{7c9c9c35-619b-49c3-a157-906f5fbe2626}</Project>
-      <Name>MathExtensions</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

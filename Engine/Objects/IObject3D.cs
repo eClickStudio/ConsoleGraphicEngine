@@ -10,7 +10,7 @@ namespace Engine3D.Objects
         /// <summary>
         /// Transform component of this object
         /// </summary>
-        ITransform ThisTransform { get; }
+        ITransform Transform { get; }
 
         /// <summary>
         /// Name of this object

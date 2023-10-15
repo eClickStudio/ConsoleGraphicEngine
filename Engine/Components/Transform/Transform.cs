@@ -2,7 +2,7 @@
 using System;
 using Hierarchy;
 using Engine3D.Components.Abstract;
-using Quaternion = Math3D.Quaternion;
+using Quaternion = MathExtensions.Quaternion;
 using Engine3D.Objects;
 
 namespace Engine3D.Components.Transform
@@ -165,7 +165,7 @@ namespace Engine3D.Components.Transform
         public event Action OnRotationChangedEvent;
 
 
-        public Transform(ITransform parent)
+        public Transform(ITransform parent = null)
         {
             Hierarchy = new HierarchyManager<ITransform>(this, parent);
             Hierarchy.OnHierarchyChangedEvent += () => OnChanged();

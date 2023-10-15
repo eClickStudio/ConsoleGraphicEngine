@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{6AE35969-DE3A-436F-AEA2-F013DCB8BC55}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>RayTracingGraphicEngine3D</RootNamespace>
+    <AssemblyName>RayTracingGraphicEngine3D</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Bcl.HashCode, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\ConsoleGraphicEngine\packages\Microsoft.Bcl.HashCode.1.1.1\lib\net461\Microsoft.Bcl.HashCode.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Runtime, Version=4.1.1.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\ConsoleGraphicEngine\packages\System.Runtime.4.3.1\lib\net462\System.Runtime.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Runtime.Extensions, Version=4.1.1.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\ConsoleGraphicEngine\packages\System.Runtime.Extensions.4.3.1\lib\net462\System.Runtime.Extensions.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Abstract\AbstractGraphicEngine.cs" />
+    <Compile Include="Abstract\IGraphicEngine.cs" />
+    <Compile Include="RayTracingEngine\Components\Camera\Abstract\AbstractCamera.cs" />
+    <Compile Include="RayTracingEngine\Components\Camera\Abstract\ICamera.cs" />
+    <Compile Include="RayTracingEngine\Components\Camera\Abstract\IRayTracingCamera.cs" />
+    <Compile Include="RayTracingEngine\Components\Camera\CameraCharSet.cs" />
+    <Compile Include="RayTracingEngine\Components\Camera\RayTracingCamera.cs" />
+    <Compile Include="RayTracingEngine\Components\Intersectable\IIntersectableComponent.cs" />
+    <Compile Include="RayTracingEngine\Components\Light\Abstract\AbstractLight.cs" />
+    <Compile Include="RayTracingEngine\Components\Light\Abstract\IDirectionLight.cs" />
+    <Compile Include="RayTracingEngine\Components\Light\Abstract\ILight.cs" />
+    <Compile Include="RayTracingEngine\Components\Light\DirectionLight.cs" />
+    <Compile Include="RayTracingEngine\Components\Light\ShapedLight.cs" />
+    <Compile Include="RayTracingEngine\Components\Rendering\Abstract\IRenderer.cs" />
+    <Compile Include="RayTracingEngine\Components\Rendering\Abstract\IShapeRenderer.cs" />
+    <Compile Include="RayTracingEngine\Components\Rendering\ShapeRenderer.cs" />
+    <Compile Include="RayTracingEngine\Components\Rendering\LightRay.cs" />
+    <Compile Include="RayTracingEngine\Components\Rendering\Material.cs" />
+    <Compile Include="RayTracingEngine\Rays\IIntersectable.cs" />
+    <Compile Include="RayTracingEngine\Rays\IIntersectableShape.cs" />
+    <Compile Include="RayTracingEngine\Rays\IntersectableShapes\Abstract\AbstractIntersectableShape.cs" />
+    <Compile Include="RayTracingEngine\Rays\IntersectableShapes\BoxShape.cs" />
+    <Compile Include="RayTracingEngine\Rays\IntersectableShapes\CubeShape.cs" />
+    <Compile Include="RayTracingEngine\Rays\IntersectableShapes\PlaneShape.cs" />
+    <Compile Include="RayTracingEngine\Rays\IntersectableShapes\SphereShape.cs" />
+    <Compile Include="RayTracingEngine\Rays\Intersections\FullIntersection.cs" />
+    <Compile Include="RayTracingEngine\Rays\Intersections\ShapeIntersection.cs" />
+    <Compile Include="RayTracingEngine\Rays\Ray.cs" />
+    <Compile Include="RayTracingEngine\RayTracingGraphicEngine.cs" />
+    <Compile Include="Abstract\Scenes\IRenderableScene.cs" />
+    <Compile Include="RayTracingEngine\Scenes\RayTracingScene.cs" />
+    <Compile Include="RayTracingEngine\Tools\Vector2Int.cs" />
+    <Compile Include="RayTracingEngine\Tools\Vector3Math.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Samples\SampleObjectsFactory.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Engine\Engine3D.csproj">
+      <Project>{e49d18fe-741a-445c-8e31-88987d309050}</Project>
+      <Name>Engine3D</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Hierarchy\Hierarchy.csproj">
+      <Project>{199c9dd1-e266-4479-9189-68b2666205b3}</Project>
+      <Name>Hierarchy</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MathExtension\MathExtensions.csproj">
+      <Project>{7c9c9c35-619b-49c3-a157-906f5fbe2626}</Project>
+      <Name>MathExtensions</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

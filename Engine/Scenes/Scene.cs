@@ -25,7 +25,7 @@ namespace Engine3D.Scenes
 
             ChangableUpdatebleChildren = AttachedObjects;
 
-            SceneTransform = new Transform(null);
+            SceneTransform = new Transform();
             SceneTransform.HierarchyName = "Scene";
         }
 
@@ -70,7 +70,7 @@ namespace Engine3D.Scenes
             {
                 AttachedObjects.Add(object3D);
 
-                ITransform transform = object3D.ThisTransform;
+                ITransform transform = object3D.Transform;
                 IHierarchyManager<ITransform> hierarchy = transform.Hierarchy;
 
                 if (hierarchy.Parent == null || !ContainObject(hierarchy.Parent.ParentObject))
@@ -117,7 +117,7 @@ namespace Engine3D.Scenes
             {
                 AttachedObjects.Remove(object3D);
 
-                ITransform transform = object3D.ThisTransform;
+                ITransform transform = object3D.Transform;
                 IHierarchyManager<ITransform> hierarchy = transform.Hierarchy;
 
                 if (hierarchy.IsChildOf(SceneTransform))

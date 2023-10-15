@@ -8,7 +8,7 @@ namespace Engine3D.Objects
 {
     public class Object3D : AbstractChangebleUpdateble, IObject3D
     {
-        public ITransform ThisTransform { get; }
+        public ITransform Transform { get; }
         public string Name { get; set; }
 
         protected readonly List<IComponent> Components;
@@ -20,10 +20,20 @@ namespace Engine3D.Objects
 
             ChangableUpdatebleChildren = Components;
 
-            ThisTransform = new Transform(null);
-            AddComponent(ThisTransform);
+            Transform = new Transform();
+            AddComponent(Transform);
         }
 
+        public Object3D(in ITransform transform, string name = "noname_object")
+        {
+            this.Name = name;
+            Components = new List<IComponent>();
+
+            ChangableUpdatebleChildren = Components;
+
+            Transform = transform;
+            AddComponent(Transform);
+        }
 
         public bool ContainComponent(in IComponent component)
         {

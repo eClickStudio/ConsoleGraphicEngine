@@ -47,11 +47,14 @@ namespace Commands
         {
             foreach (KeyValuePair<string, ICommand> pair in _commands)
             {
+                SetColor(false);
+                Console.Write(" * ");
+
                 SetColor(true);
-                Console.Write($"{pair.Key}\t");
+                Console.Write($"{pair.Key} ");
 
                 SetColor(false);
-                Console.WriteLine($"-\t{pair.Value.description}");
+                Console.WriteLine($"- {pair.Value.description}");
             }
         }
 

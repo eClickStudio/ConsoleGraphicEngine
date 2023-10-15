@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -11,8 +11,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CommandManager\Commands.csproj" />
-    <ProjectReference Include="..\ConsoleGraphicEngine\ConsoleGraphicEngine3D.csproj" />
+    <ProjectReference Include="..\ConsoleSetter\ConsoleSetter.csproj" />
     <ProjectReference Include="..\Engine\Engine3D.csproj" />
+    <ProjectReference Include="..\RayTracingGraphicEngine\RayTracingGraphicEngine3D.csproj" />
   </ItemGroup>
 
 </Project>
