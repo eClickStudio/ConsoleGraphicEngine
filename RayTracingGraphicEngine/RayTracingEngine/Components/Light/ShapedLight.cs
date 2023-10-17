@@ -5,7 +5,10 @@ namespace RayTracingGraphicEngine3D.Components.Light
 {
     public class ShapedLight : AbstractLight, IIntersectable
     {
-        public IIntersectableShape Shape { get; private set; }
+        /// <summary>
+        /// Shape of this line
+        /// </summary>
+        public IIntersectableShape Shape { get; set; }
 
         public ShapedLight(in IIntersectableShape lightShape)
         {

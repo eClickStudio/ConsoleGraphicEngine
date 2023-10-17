@@ -1,4 +1,5 @@
-﻿using RayTracingGraphicEngine3D.Components.Camera.Abstract;
+﻿using RayTracingGraphicEngine3D.Abstract.Scenes;
+using RayTracingGraphicEngine3D.Components.Camera.Abstract;
 using RayTracingGraphicEngine3D.Components.Light.Abstract;
 using RayTracingGraphicEngine3D.Scenes;
 using System;

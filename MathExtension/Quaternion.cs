@@ -121,7 +121,7 @@ namespace MathExtensions
         /// <returns>Roteted vector</returns>
         public static Vector3 RotateVector(Vector3 vector, Vector3 rotationAxis, float angle)
         {
-            if (rotationAxis == Vector3.Zero || VectorExtension.IsNormal(rotationAxis)
+            if (rotationAxis == Vector3.Zero || !VectorExtension.IsNormal(rotationAxis)
                 )
             {
                 throw new ArgumentException($"Rotation Axis is invalid; Rotation axis = {rotationAxis}");

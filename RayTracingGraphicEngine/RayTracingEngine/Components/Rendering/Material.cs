@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MathExtensions;
+using System;
 
 namespace RayTracingGraphicEngine3D.Components.Rendering
 {

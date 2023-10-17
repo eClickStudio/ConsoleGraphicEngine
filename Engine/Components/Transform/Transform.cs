@@ -172,9 +172,9 @@ namespace Engine3D.Components.Transform
 
             OnAttachedToObjectEvent += ChangeHierarchyName;
 
-            AxisX = new Vector3(1, 0, 0);
-            AxisY = new Vector3(0, 1, 0);
-            AxisZ = new Vector3(0, 0, 1);
+            AxisX = Vector3.UnitX;
+            AxisY = Vector3.UnitY;
+            AxisZ = Vector3.UnitZ;
         }
 
         private void ChangeHierarchyName(IObject3D object3D)

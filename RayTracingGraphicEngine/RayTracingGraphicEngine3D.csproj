@@ -77,6 +77,7 @@
     <Compile Include="RayTracingEngine\Components\Rendering\ShapeRenderer.cs" />
     <Compile Include="RayTracingEngine\Components\Rendering\LightRay.cs" />
     <Compile Include="RayTracingEngine\Components\Rendering\Material.cs" />
+    <Compile Include="RayTracingEngine\Configurations\Configurations.cs" />
     <Compile Include="RayTracingEngine\Rays\IIntersectable.cs" />
     <Compile Include="RayTracingEngine\Rays\IIntersectableShape.cs" />
     <Compile Include="RayTracingEngine\Rays\IntersectableShapes\Abstract\AbstractIntersectableShape.cs" />

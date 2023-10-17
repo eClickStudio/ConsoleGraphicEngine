@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using MathExtensions;
+using RayTracingGraphicEngine3D.RayTracingEngine.Configurations;
 
 namespace RayTracingGraphicEngine3D.Rays.IntersectableShapes
 {
@@ -83,7 +84,7 @@ namespace RayTracingGraphicEngine3D.Rays.IntersectableShapes
             Vector3 zxy = new Vector3(t1.Z, t1.X, t1.Y);
             direction = -ray.Direction.Sign() * t1.Step(yzx) * t1.Step(zxy);
 
-            Ray normalRay = new Ray(nearestIntersection + direction * MIN_RAY_STEP, direction);
+            Ray normalRay = new Ray(nearestIntersection + direction * Configurations.MIN_RAY_STEP, direction);
 
             //TODO: didPassThroughtEnvironment should only be true if the ray is propagating through the inside of the shape.
             return new ShapeIntersection(minDistance, true, normalRay);

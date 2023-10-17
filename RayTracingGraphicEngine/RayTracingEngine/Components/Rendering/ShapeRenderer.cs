@@ -3,6 +3,8 @@ using Engine3D.Components.Abstract;
 using System;
 using System.Numerics;
 using RayTracingGraphicEngine3D.Components.Rendering.Abstract;
+using Quaternion = MathExtensions.Quaternion;
+using RayTracingGraphicEngine3D.RayTracingEngine.Configurations;
 
 namespace RayTracingGraphicEngine3D.Components.Rendering
 {
@@ -17,27 +19,72 @@ namespace RayTracingGraphicEngine3D.Components.Rendering
             Material = material;
             Shape = shape;
 
-            shape.onChanged += () => OnChanged();
+            shape.OnChangedEvent += () => OnChanged();
         }
 
         //TODO: check how normal vector directed; It 
+
+        private float GetAngleBetweenVectors(Vector3 a, Vector3 b)
+        {
+            if (a.Length() != 1 || b.Length() != 1)
+            {
+                //TODO: its just for tests
+                throw new ArgumentException($"Vectors are not normalized; a = {a}; b = {b}");
+            }
+
+            return (float)Math.Acos(Vector3.Dot(a, b) / (a.Length() * b.Length()));
+        }
 
         public LightRay GetReflectedRay(Material environmentMaterial, LightRay lightRay, Ray normalRay)
         {
             float n1 = environmentMaterial.RefractiveIndex;
             float n2 = Material.RefractiveIndex;
-
             float reflectionCoefficient = (float)Math.Pow((n1 - n2) / (n1 + n2), 2);
+            float reflectedRayIntensity = reflectionCoefficient * lightRay.Intensity;
 
-            Vector3 rotationAxis = Vector3.Cross(-lightRay.Ray.Direction, normalRay.Direction);
+            Vector3 incidenceDirection = -lightRay.Ray.Direction;
+            Vector3 normalDirection = normalRay.Direction;
+
+            float incidenceAngle = GetAngleBetweenVectors(incidenceDirection, normalDirection);
+            float rotationAngle = -incidenceAngle * 2;
+
+            Vector3 rotationAxis = Vector3.Cross(incidenceDirection, normalDirection);
+            Vector3 reflectedDirection = Quaternion.RotateVector(incidenceDirection, rotationAxis, rotationAngle);
+
+            //TEST: just for tests
+            if (GetAngleBetweenVectors(reflectedDirection, normalDirection) != incidenceAngle)
+            {
+                throw new Exception($"Reflected ray is invalid; Angle between normal and reflected rays = {GetAngleBetweenVectors(incidenceDirection, reflectedDirection)}");
+            }
+
+            return new LightRay(new Ray(normalRay.Origin, reflectedDirection), reflectedRayIntensity);
         }
 
         public LightRay GetRefractedRay(Material environmentMaterial, LightRay lightRay, Ray normalRay)
         {
             float n1 = environmentMaterial.RefractiveIndex;
             float n2 = Material.RefractiveIndex;
-
             float refractionCoefficient = (float)((4 * n1 * n2) / Math.Pow(n1 + n2, 2));
+            float refractedRayIntensity = refractionCoefficient * lightRay.Intensity;
+
+            Vector3 incidenceDirection = -lightRay.Ray.Direction;
+            Vector3 normalDirection = normalRay.Direction;
+
+            float incidenceAngle = GetAngleBetweenVectors(incidenceDirection, normalDirection);
+            float refractedAngle = (float)Math.Asin(n1 / n2 * Math.Sin(incidenceAngle));
+            float rotationAngle = (float)(incidenceAngle + Math.PI - refractedAngle);
+
+            Vector3 rotationAxis = Vector3.Cross(incidenceDirection, normalDirection);
+            Vector3 refractedDirection = Quaternion.RotateVector(incidenceDirection, rotationAxis, rotationAngle);
+
+            //TEST: just for tests
+            if (GetAngleBetweenVectors(refractedDirection, -normalDirection) != refractedAngle)
+            {
+                throw new Exception($"Refracted ray is invalid; Angle between normal and refracted rays = {GetAngleBetweenVectors(incidenceDirection, refractedDirection)}");
+            }
+
+            Vector3 origin = normalRay.Origin - 2 * normalDirection * Configurations.MIN_RAY_STEP; 
+            return new LightRay(new Ray(origin, refractedDirection), refractedRayIntensity);
         }
 
         //protected const float _MIN_RAY_STEP = 0.01f;

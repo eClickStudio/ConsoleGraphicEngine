@@ -1,6 +1,7 @@
 ﻿using System.Numerics;
 using System;
 using RayTracingGraphicEngine3D.Rays;
+using MathExtensions;
 
 namespace RayTracingGraphicEngine3D.Components.Rendering
 {
