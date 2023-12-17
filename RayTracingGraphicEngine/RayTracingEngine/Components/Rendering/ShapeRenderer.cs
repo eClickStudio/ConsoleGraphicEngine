@@ -26,10 +26,12 @@ namespace RayTracingGraphicEngine3D.Components.Rendering
 
         private float GetAngleBetweenVectors(Vector3 a, Vector3 b)
         {
-            if (a.Length() != 1 || b.Length() != 1)
+            if (Math.Round(a.Length(), 1) != 1 || Math.Round(b.Length(), 1) != 1)
             {
                 //TODO: its just for tests
-                throw new ArgumentException($"Vectors are not normalized; a = {a}; b = {b}");
+                throw new ArgumentException($"Vectors are not normalized; a = {a}; b = {b};" +
+                    $"\nNormalized a = {Vector3.Normalize(a)}; Normalized b = {Vector3.Normalize(b)};" +
+                    $"\n a Lenght = {a.Length()}; b Lenght = {b.Length()}");
             }
 
             return (float)Math.Acos(Vector3.Dot(a, b) / (a.Length() * b.Length()));
@@ -46,13 +48,13 @@ namespace RayTracingGraphicEngine3D.Components.Rendering
             Vector3 normalDirection = normalRay.Direction;
 
             float incidenceAngle = GetAngleBetweenVectors(incidenceDirection, normalDirection);
-            float rotationAngle = -incidenceAngle * 2;
+            float rotationAngle = incidenceAngle * 2;
 
             Vector3 rotationAxis = Vector3.Cross(incidenceDirection, normalDirection);
             Vector3 reflectedDirection = Quaternion.RotateVector(incidenceDirection, rotationAxis, rotationAngle);
 
             //TEST: just for tests
-            if (GetAngleBetweenVectors(reflectedDirection, normalDirection) != incidenceAngle)
+            if (Math.Round(GetAngleBetweenVectors(reflectedDirection, normalDirection), 2) != Math.Round(incidenceAngle, 2))
             {
                 throw new Exception($"Reflected ray is invalid; Angle between normal and reflected rays = {GetAngleBetweenVectors(incidenceDirection, reflectedDirection)}");
             }
@@ -78,9 +80,9 @@ namespace RayTracingGraphicEngine3D.Components.Rendering
             Vector3 refractedDirection = Quaternion.RotateVector(incidenceDirection, rotationAxis, rotationAngle);
 
             //TEST: just for tests
-            if (GetAngleBetweenVectors(refractedDirection, -normalDirection) != refractedAngle)
+            if (Math.Round(GetAngleBetweenVectors(refractedDirection, -normalDirection), 2) != Math.Round(refractedAngle, 2))
             {
-                throw new Exception($"Refracted ray is invalid; Angle between normal and refracted rays = {GetAngleBetweenVectors(incidenceDirection, refractedDirection)}");
+                throw new Exception($"Refracted ray is invalid; Angle between normal and refracted rays = {GetAngleBetweenVectors(refractedDirection, -normalDirection)}");
             }
 
             Vector3 origin = normalRay.Origin - 2 * normalDirection * Configurations.MIN_RAY_STEP; 

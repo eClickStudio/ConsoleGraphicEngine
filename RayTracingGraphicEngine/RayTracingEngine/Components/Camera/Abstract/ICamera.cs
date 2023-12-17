@@ -24,9 +24,9 @@ namespace RayTracingGraphicEngine3D.Components.Camera.Abstract
         /// <summary>
         /// Get char using brightness
         /// </summary>
-        /// <param name="brightness">float between 0 and 1. Can be null if there is no color</param>
+        /// <param name="intensity">float between 0 and 1. Can be null if there is no color</param>
         /// <returns>Char</returns>
-        char GetChar(float? brightness);
+        char GetChar(float? intensity);
 
         /// <summary>
         /// Get positon of screen point relative center of screen; min X, Y = -1; max X, Y = 1 

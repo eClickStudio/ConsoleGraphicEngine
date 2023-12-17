@@ -32,10 +32,9 @@ namespace RayTracingGraphicEngine3D.Components.Light
             }
         }
 
-        public DirectionLight(Vector3 direction, float intensity)
+        public DirectionLight(Vector3 direction, float intensity) : base(intensity)
         {
             Direction = direction;
-            Intensity = intensity;
         }
     }
 }

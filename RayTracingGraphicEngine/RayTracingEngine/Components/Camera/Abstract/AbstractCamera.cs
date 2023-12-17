@@ -92,15 +92,14 @@ namespace RayTracingGraphicEngine3D.Components.Camera.Abstract
             CharSet = charSet;
         }
 
-        public char GetChar(float? brightness)
+        public char GetChar(float? intensity)
         {
-            if (brightness.HasValue)
+            if (intensity.HasValue)
             {
-                brightness = MathExtension.Clamp(brightness.Value, 0, 1);
+                intensity = MathExtension.Clamp(intensity.Value, 0, 1);
+                int colorIndex = MathExtension.Clamp((int)(intensity * CharSet.CharsCount), 0, CharSet.CharsCount - 1); ;
 
-                int brightnessIndex = MathExtension.Clamp((int)(brightness * CharSet.CharsCount), 0, CharSet.CharsCount - 1); ;
-
-                return CharSet.CharsGradient[brightnessIndex];
+                return CharSet.CharsGradient[colorIndex];
             }
             else
             {

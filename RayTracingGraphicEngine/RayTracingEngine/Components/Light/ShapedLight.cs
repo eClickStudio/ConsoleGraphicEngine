@@ -10,7 +10,7 @@ namespace RayTracingGraphicEngine3D.Components.Light
         /// </summary>
         public IIntersectableShape Shape { get; set; }
 
-        public ShapedLight(in IIntersectableShape lightShape)
+        public ShapedLight(in IIntersectableShape lightShape, float intensity) : base(intensity)
         {
             Shape = lightShape;
         }

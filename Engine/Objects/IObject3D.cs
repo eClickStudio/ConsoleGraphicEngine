@@ -1,6 +1,7 @@
 ﻿using Engine3D.ChangeTriggers;
 using Engine3D.Components.Abstract;
 using Engine3D.Components.Transform;
+using System;
 using System.Collections.Generic;
 
 namespace Engine3D.Objects
@@ -43,7 +44,22 @@ namespace Engine3D.Objects
         /// </summary>
         /// <typeparam name="T">Component type</typeparam>
         /// <returns></returns>
-        bool ContainComponent<T>() where T : class, IComponent;
+        bool ContainComponent<T>() where T : IComponent;
+
+
+        /// <summary>
+        /// Find a component based on some condition 
+        /// </summary>
+        /// <param name="match">Condition to find</param>
+        /// <returns></returns>
+        IComponent FindComponent(in Predicate<IComponent> match);
+
+        /// <summary>
+        /// Find all components based on some condition
+        /// </summary>
+        /// <param name="match">Condition to find</param>
+        /// <returns></returns>
+        IReadOnlyList<IComponent> FindAllComponents(in Predicate<IComponent> match);
 
 
         /// <summary>
@@ -51,7 +67,7 @@ namespace Engine3D.Objects
         /// </summary>
         /// <typeparam name="T">Component type</typeparam>
         /// <returns></returns>
-        T GetComponent<T>() where T : class, IComponent;
+        T GetComponent<T>() where T : IComponent;
 
         /// <summary>
         /// Get component by its type
@@ -59,7 +75,7 @@ namespace Engine3D.Objects
         /// <typeparam name="T">Component type</typeparam>
         /// <param name="component">Attached component</param>
         /// <returns>Is component attached to this object?</returns>
-        bool TryGetComponent<T>(out T component) where T : class, IComponent;
+        bool TryGetComponent<T>(out T component) where T : IComponent;
 
         /// <summary>
         /// Get all components attached to this object

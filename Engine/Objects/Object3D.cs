@@ -63,12 +63,12 @@ namespace Engine3D.Objects
             return ContainComponentsArray(components);
         }
 
-        public bool ContainComponent<T>() where T : class, IComponent
+        public bool ContainComponent<T>() where T : IComponent
         {
             return GetComponent<T>() != null;
         }
 
-        public bool TryGetComponent<T>(out T component) where T : class, IComponent
+        public bool TryGetComponent<T>(out T component) where T : IComponent
         {
             component = GetComponent<T>();
 
@@ -76,14 +76,31 @@ namespace Engine3D.Objects
         }
 
 
-        public T GetComponent<T>() where T : class, IComponent
+        public IComponent FindComponent(in Predicate<IComponent> match)
         {
-            Predicate<IComponent> predicate = (element) => element is T;
-
-            return Components.Find(predicate) as T;
+            return Components.Find(match);
         }
 
-        public IReadOnlyList<T> GetComponents<T>() where T : class, IComponent
+        public IReadOnlyList<IComponent> FindAllComponents(in Predicate<IComponent> match)
+        {
+            return Components.FindAll(match);
+        }
+
+        public T GetComponent<T>() where T : IComponent
+        {
+            Predicate<IComponent> match = (element) => element is T;
+
+            IComponent foundComponent = Components.Find(match);
+
+            if (foundComponent != null)
+            {
+                return (T)foundComponent;
+            }
+
+            return default;
+        }
+
+        public IReadOnlyList<T> GetComponents<T>() where T : IComponent
         {
             //TODO: test it
 

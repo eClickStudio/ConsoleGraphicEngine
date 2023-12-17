@@ -28,5 +28,10 @@ namespace RayTracingGraphicEngine3D.Components.Light.Abstract
                 }
             }
         }
+
+        public AbstractLight(float intensity)
+        {
+            Intensity = intensity;
+        }
     }
 }

@@ -82,7 +82,7 @@ namespace RayTracingGraphicEngine3D.Components.Rendering
 
         public static Material Solid => new Material(0.6f, 0);
         public static Material Water => new Material(0.75f, 100);
-        public static Material Diamons => new Material(0.41f, 1000);
+        public static Material Diamond => new Material(0.41f, 1000);
         public static Material Glass => new Material(0.6f, 1000);
         public static Material Vacuum => new Material(1, float.MaxValue);
     }

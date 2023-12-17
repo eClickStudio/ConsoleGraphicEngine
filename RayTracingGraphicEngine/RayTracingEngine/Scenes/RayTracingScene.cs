@@ -2,10 +2,11 @@
 using Engine3D.Scenes;
 using System.Collections.Generic;
 using RayTracingGraphicEngine3D.Rays;
-using RayTracingGraphicEngine3D.Components.Intersectable;
 using RayTracingGraphicEngine3D.Components.Light.Abstract;
 using RayTracingGraphicEngine3D.Components.Camera.Abstract;
 using RayTracingGraphicEngine3D.Abstract.Scenes;
+using System;
+using Engine3D.Components.Abstract;
 
 namespace RayTracingGraphicEngine3D.Scenes
 {
@@ -25,14 +26,27 @@ namespace RayTracingGraphicEngine3D.Scenes
             _intersectables = new List<IIntersectable>();
         }
 
+        private IReadOnlyList<IComponent> FindIntersectableComponents(in IObject3D object3D)
+        {
+            Predicate<IComponent> match = (component) => component is IIntersectable;
+            return object3D.FindAllComponents(match);
+        }
+
         public override void AddObject(in IObject3D object3D)
         {
             if (object3D != null && !ContainObject(object3D))
             {
-                if (object3D.TryGetComponent(out IIntersectableComponent renderer))
+                IReadOnlyList<IComponent> intersectableComponents = FindIntersectableComponents(object3D);
+
+                if (intersectableComponents.Count > 0)
                 {
-                    System.Console.WriteLine("Add intersectable component");
-                    _intersectables.Add(renderer);
+                    foreach (IComponent component in intersectableComponents)
+                    {
+                        if (component is IIntersectable intersectable)
+                        {
+                            _intersectables.Add(intersectable);
+                        }
+                    }
                 }
             }
 
@@ -43,9 +57,17 @@ namespace RayTracingGraphicEngine3D.Scenes
         {
             if (object3D != null && ContainObject(object3D))
             {
-                if (object3D.TryGetComponent(out IIntersectableComponent renderer))
+                IReadOnlyList<IComponent> intersectableComponents = FindIntersectableComponents(object3D);
+
+                if (intersectableComponents.Count > 0)
                 {
-                    _intersectables.Remove(renderer);
+                    foreach (IComponent component in intersectableComponents)
+                    {
+                        if (component is IIntersectable intersectable)
+                        {
+                            _intersectables.Remove(intersectable);
+                        }
+                    }
                 }
             }
 

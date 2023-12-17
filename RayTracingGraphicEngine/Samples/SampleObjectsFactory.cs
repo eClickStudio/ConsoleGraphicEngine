@@ -38,6 +38,49 @@ namespace RayTracingGraphicEngine3D.Samples
         }
         #endregion
 
+        #region Light
+        private static IObject3D GetShapeLightObject(in ITransform transform, in IIntersectableShape shape, string name, float intensity)
+        {
+            Object3D object3D = new Object3D(transform, name);
+            ShapedLight shapedLight = new ShapedLight(shape, intensity);
+            object3D.AddComponent(shapedLight);
+
+            return object3D;
+        }
+
+        public static IObject3D GetSphereLight(string name, float intensity, float radius)
+        {
+            ITransform transform = new Transform();
+            IIntersectableShape shape = new SphereShape(transform, radius);
+
+            return GetShapeLightObject(transform, shape, name, intensity);
+        }
+
+        public static IObject3D GetBoxLight(string name, float intensity, Vector3 size)
+        {
+            ITransform transform = new Transform();
+            IIntersectableShape shape = new BoxShape(transform, size);
+
+            return GetShapeLightObject(transform, shape, name, intensity);
+        }
+
+        public static IObject3D GetCudeLight(string name, float intensity, float edgeLenght)
+        {
+            ITransform transform = new Transform();
+            IIntersectableShape shape = new CubeShape(transform, edgeLenght);
+
+            return GetShapeLightObject(transform, shape, name, intensity);
+        }
+
+        public static IObject3D GetPlaneLight(string name, float intensity, Vector3 normalVector, float offset)
+        {
+            ITransform transform = new Transform();
+            IIntersectableShape shape = new PlaneShape(transform, normalVector, offset);
+
+            return GetShapeLightObject(transform, shape, name, intensity);
+        }
+        #endregion
+
         #region ShapeRenderers
         private static IObject3D GetShapeRendererObject(in ITransform transform, in IIntersectableShape shape, string name, Material material)
         {

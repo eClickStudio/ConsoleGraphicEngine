@@ -14,12 +14,12 @@ namespace MathExtensions
         public float C;
         public float D;
 
-        public Quaternion(float A, float B, float C, float D)
+        public Quaternion(float a, float b, float c, float d)
         {
-            this.A = A;
-            this.B = B;
-            this.C = C;
-            this.D = D;
+            this.A = a;
+            this.B = b;
+            this.C = c;
+            this.D = d;
         }
 
         public static Quaternion operator +(Quaternion l, Quaternion r)

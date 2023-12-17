@@ -78,11 +78,18 @@ namespace RayTracingGraphicEngine3D
 
                 if (ray.Intensity < MinRayIntensity)
                 {
+                    if (intersection.Value.Intersectable is IShapeRenderer)
+                    {
+                        //Console.WriteLine("Material absorbed whole light");
+                    }
+
                     return 0;
                 }
 
                 if (intersection.Value.Intersectable is ILight light)
                 {
+                    //Console.WriteLine($"Found light ray.Intensity = {ray.Intensity}");
+
                     return light.Intensity * ray.Intensity;
                 }
                 else if (intersection.Value.Intersectable is IShapeRenderer renderer)
@@ -91,33 +98,23 @@ namespace RayTracingGraphicEngine3D
 
                     LightRay reflectedRay = renderer.GetReflectedRay(environmentMaterial, ray, normalRay);
                     float reflectedRayIntensity = RenderRay(environmentMaterial, reflectedRay);
+                    //Console.WriteLine($"reflectedRayIntensity = {reflectedRayIntensity}");
 
                     LightRay refractedRay = renderer.GetRefractedRay(environmentMaterial, ray, normalRay);
                     float refractedRayIntensity = RenderRay(renderer.Material, refractedRay);
+                    //Console.WriteLine($"refractedRayIntensity = {refractedRayIntensity}");
 
                     return reflectedRayIntensity + refractedRayIntensity;
                 }
             }
 
+            //Console.WriteLine("No intersections");
             return 0;
         }
 
         private float GetAbsorptionCoefficient(Material environmentMaterial, float distance)
         {
             return (float)Math.Pow(Math.E, environmentMaterial.AbsorptionRate * distance);
-        }
-
-        private float GetReflectedCoefficient(Material material1, Material material2)
-        {
-            float refractiveIndex1 = material1.RefractiveIndex;
-            float refractiveIndex2 = material2.RefractiveIndex;
-
-            return (float)Math.Pow((refractiveIndex1 - refractiveIndex2) / (refractiveIndex1 + refractiveIndex2), 2);
-        }
-
-        private float GetRefractedCoefficient(float reflectedCoefficient)
-        {
-            return 1 - reflectedCoefficient;
         }
 
         private FullIntersection? GetNearestIntersection(Ray ray)
@@ -130,11 +127,14 @@ namespace RayTracingGraphicEngine3D
                 IIntersectableShape shape = intersectable.Shape;
                 ShapeIntersection? intersection = shape.GetShapeIntersection(ray);
 
-                if (!nearestIntersection.HasValue 
-                    || (intersection.HasValue && intersection.Value.MinIntersectionDistance < nearestIntersection.Value.MinIntersectionDistance))
+                if (intersection.HasValue)
                 {
-                    nearestIntersectable = intersectable;
-                    nearestIntersection = intersection;
+                    if (!nearestIntersection.HasValue
+                        || intersection.Value.MinIntersectionDistance < nearestIntersection.Value.MinIntersectionDistance)
+                    {
+                        nearestIntersectable = intersectable;
+                        nearestIntersection = intersection;
+                    }
                 }
             }
 
