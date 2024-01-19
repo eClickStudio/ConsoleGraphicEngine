@@ -14,19 +14,75 @@ namespace ConsoleRayTracingRenderer.Scripts
             SynchronousAroundPoint
         }
 
-        private RotationType _rotationType { get; }
-        private ITransform _centerTransform { get; }
-        private Vector3 _rotationAxis { get; }
-        private float _speed { get; }
+        private RotationType _rotationScheme;
+        public RotationType RotationScheme
+        {
+            get => _rotationScheme;
+            set
+            {
+                if (_rotationScheme != value)
+                {
+                    _rotationScheme = value;
+
+                    OnChanged();
+                }
+            }
+        }
+
+
+        private ITransform _centerTransform;
+        public ITransform CenterTransform
+        {
+            get => _centerTransform;
+            set
+            {
+                if (_centerTransform != value)
+                {
+                    _centerTransform = value;
+
+                    OnChanged();
+                }
+            }
+        }
+
+        private Vector3 _rotationAxis;
+        public Vector3 RotationAxis
+        {
+            get => _rotationAxis;
+            set
+            {
+                if (_rotationAxis != value)
+                {
+                    _rotationAxis = value;
+
+                    OnChanged();
+                }
+            }
+        }
+
+        private float _speed;
+        public float Speed
+        {
+            get => _speed;
+            set
+            {
+                if (_speed != value)
+                {
+                    _speed = value;
+
+                    OnChanged();
+                }
+            }
+        }
 
         /// <param name="rotationAxis">Rotation axis</param>
         /// <param name="speed">Degrees per second</param>
         public TransformRotator(Vector3 rotationAxis, float speed)
         {
-            _rotationType = RotationType.AroundAxis;
+            RotationScheme = RotationType.AroundAxis;
 
-            _rotationAxis = rotationAxis;
-            _speed = speed;
+            RotationAxis = rotationAxis;
+            Speed = speed;
         }
 
         /// <param name="synchronousRotate">Rotete synchronous?</param>
@@ -37,39 +93,39 @@ namespace ConsoleRayTracingRenderer.Scripts
         {
             if (synchronousRotate)
             {
-                _rotationType = RotationType.SynchronousAroundPoint;
+                RotationScheme = RotationType.SynchronousAroundPoint;
             }
             else
             {
-                _rotationType = RotationType.AroundPoint;
+                RotationScheme = RotationType.AroundPoint;
             }
 
-            _centerTransform = centerTransform;
-            _rotationAxis = rotationAxis;
-            _speed = speed;
+            CenterTransform = centerTransform;
+            RotationAxis = rotationAxis;
+            Speed = speed;
         }
 
         protected override void SubUpdate(uint frameTime)
         {
-            float angularOffset = (float)frameTime / 1000 * (float)Math.PI / 180 * _speed;
+            float angularOffset = (float)frameTime / 1000 * (float)Math.PI / 180 * Speed;
 
             Rotate(ParentObject.Transform, angularOffset);
         }
 
         private void Rotate(ITransform transform, float angularOffset)
         {
-            switch (_rotationType)
+            switch (RotationScheme)
             {
                 case RotationType.AroundAxis:
-                    transform.RotateAroundAxis(_rotationAxis, angularOffset);
+                    transform.RotateAroundAxis(RotationAxis, angularOffset);
                     break;
 
                 case RotationType.AroundPoint:
-                    transform.RotateAroundPoint(_centerTransform.Position, _rotationAxis, angularOffset);
+                    transform.RotateAroundPoint(CenterTransform.Position, RotationAxis, angularOffset);
                     break;
 
                 case RotationType.SynchronousAroundPoint:
-                    transform.SynchronousRotateAroundPoint(_centerTransform.Position, _rotationAxis, angularOffset);
+                    transform.SynchronousRotateAroundPoint(CenterTransform.Position, RotationAxis, angularOffset);
                     break;
             }
         }

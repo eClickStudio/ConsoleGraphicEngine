@@ -132,6 +132,11 @@ namespace MathExtensions
                 throw new ArgumentException($"Vector you want to rotate is invalid; Vector = {vector}");
             }
 
+            if (!MathExtension.IsNormal(angle))
+            {
+                throw new ArgumentException($"Angle is invalid; Angle = {angle}");
+            }
+
             rotationAxis = Vector3.Normalize(rotationAxis);
 
             Quaternion directionQuaternion = new Quaternion(0, vector.X, vector.Y, vector.Z);

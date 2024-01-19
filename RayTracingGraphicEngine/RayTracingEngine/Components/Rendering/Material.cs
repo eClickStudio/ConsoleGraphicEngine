@@ -8,23 +8,25 @@ namespace RayTracingGraphicEngine3D.Components.Rendering
     /// </summary>
     public struct Material
     {
+        //This model is wrong: there are different results with different light direction
+
         //TODO: try to add roughness: add some angular offset to reflected and refracted rays
         //TODO: all parameters should work
 
-        private float _refractiveIndedex;
+        private float _reflectiveIndedex;
 
         /// <summary>
         /// The ratio of light speed in a vacuum to light speed in this material
-        /// 1 - min value; vacuum
-        /// 1.3 - water
-        /// float.MaxValue - max value
+        /// 1 - min value; density of vacuum
+        /// 1.3 - water density
+        /// float.Max value - max value; imposible density
         /// </summary>
-        public float RefractiveIndex
+        public float ReflectiveIndex
         {
-            get => _refractiveIndedex;
+            get => _reflectiveIndedex;
             set
             {
-                _refractiveIndedex = MathExtension.Clamp(value, 1, float.MaxValue);
+                _reflectiveIndedex = MathExtension.Clamp(value, 1, float.MaxValue);
             }
         }
 
@@ -33,7 +35,7 @@ namespace RayTracingGraphicEngine3D.Components.Rendering
 
         /// <summary>
         /// How intensely material absorbs light
-        /// 0 - this material is completely transparent
+        /// 0 - this material is completely transparent; light does not become weaker
         /// x - intensity of ray spreading in this material weakens by (e)^x times each unit; (e) - euler number ~= 2.72
         /// </summary>
         public float AbsorptionRate
@@ -55,16 +57,16 @@ namespace RayTracingGraphicEngine3D.Components.Rendering
             relativeLightSpeed = MathExtension.Clamp(relativeLightSpeed, 0, 1);
             distanceToHalfRayIntensity = MathExtension.Clamp(distanceToHalfRayIntensity, 0, float.MaxValue);
 
-            _refractiveIndedex = 0;
+            _reflectiveIndedex = 0;
             _absorptionRate = 0;
 
             if (relativeLightSpeed == 0)
             {
-                _refractiveIndedex = float.MaxValue;
+                _reflectiveIndedex = float.MaxValue;
             }
             else
             {
-                _refractiveIndedex = 1 / relativeLightSpeed;
+                _reflectiveIndedex = 1 / relativeLightSpeed;
             }
 
 
@@ -85,5 +87,6 @@ namespace RayTracingGraphicEngine3D.Components.Rendering
         public static Material Diamond => new Material(0.41f, 1000);
         public static Material Glass => new Material(0.6f, 1000);
         public static Material Vacuum => new Material(1, float.MaxValue);
+        public static Material Fog => new Material(1, 10);
     }
 }

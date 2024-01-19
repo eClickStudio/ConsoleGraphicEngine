@@ -68,6 +68,20 @@ namespace Engine3D.Components.Transform
         /// <param name="rotationAxis">Vector of axis</param>
         /// <param name="angle">Angle in radians</param>
         void SynchronousRotateAroundPoint(Vector3 point, Vector3 rotationAxis, float angle);
+
+        /// <summary>
+        /// Rotates the body so that the LocalAxis points in the direction of DirectionVector
+        /// </summary>
+        /// <param name="localAxis">Axis you want to direct in local space</param>
+        /// <param name="directionVector">Direction vector in local space</param>
+        void DirectAxisByVector(Vector3 localAxis, Vector3 directionVector);
+
+        /// <summary>
+        /// Кotates the body so that the LocalAxis faces the WorldPoint
+        /// </summary>
+        /// <param name="localAxis">Axis you want to direct in local space</param>
+        /// <param name="worldPoint">Point in world space</param>
+        void DirectAxisByPosition(Vector3 localAxis, Vector3 worldPoint);
         #endregion
     }
 }

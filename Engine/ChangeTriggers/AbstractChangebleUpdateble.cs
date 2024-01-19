@@ -33,7 +33,7 @@ namespace Engine3D.ChangeTriggers
         /// <summary>
         /// Update method. Calls before main update
         /// </summary>
-        /// <param name="frameTime">Time elapsed from last frame</param>
+        /// <param name="frameTime">Time elapsed from last frame in milliseconds</param>
         protected virtual void SubUpdate(uint frameTime) { }
 
         private bool UpdateChildren(uint frameTime)

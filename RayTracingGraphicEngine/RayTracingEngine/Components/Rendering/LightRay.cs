@@ -31,20 +31,32 @@ namespace RayTracingGraphicEngine3D.Components.Rendering
 
         public Ray Ray { get; }
 
-        public LightRay(Ray ray, float intensity)
+        /// <summary>
+        /// How many times ray has been reflected or refracted;
+        /// </summary>
+        public uint InteractionCount { get; private set; }
+
+        public LightRay(Ray ray, float intensity, uint interactionCount = 0)
         {
             _intensity = 0;
+            InteractionCount = interactionCount;
 
             Ray = ray;
             Intensity = intensity;
         }
 
-        public LightRay(Vector3 origin, Vector3 direction, float intensity)
+        public LightRay(Vector3 origin, Vector3 direction, float intensity, uint interactionCount = 0)
         {
             _intensity = 0;
+            InteractionCount = interactionCount;
 
             Ray = new Ray(origin, direction);
             Intensity = intensity;
+        }
+
+        public void Interact()
+        {
+            InteractionCount++;
         }
     }
 }

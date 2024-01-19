@@ -68,6 +68,12 @@ namespace RayTracingGraphicEngine3D.Rays.IntersectableShapes
                 {
                     distances.Add(-difference + h);
                 }
+
+                if (distances.Count == 0)
+                {
+                    //May be this condition is crutch
+                    return null;
+                }
             }
 
             float minDistance = distances.Min();

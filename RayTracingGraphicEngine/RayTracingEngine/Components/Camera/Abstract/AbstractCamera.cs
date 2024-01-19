@@ -110,10 +110,14 @@ namespace RayTracingGraphicEngine3D.Components.Camera.Abstract
 
         public Vector2 GetRelativePosition(int absoluteX, int absoluteY)
         {
-            return new Vector2(
-                ((float)absoluteX / Resolution.X * 2 - 1) * CharAspect,
-                1 - (float)absoluteY / Resolution.Y * 2
-            );
+            float aspect = Resolution.X / Resolution.Y;
+
+            float x = (float)absoluteX / Resolution.X * 2 - 1;
+            float y = 1 - (float)absoluteY / Resolution.Y * 2;
+
+            y *= aspect * CharAspect;
+
+            return new Vector2(x, y);
         }
     }
 }

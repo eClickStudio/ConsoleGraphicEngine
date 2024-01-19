@@ -4,6 +4,7 @@ using Hierarchy;
 using Engine3D.Components.Abstract;
 using Quaternion = MathExtensions.Quaternion;
 using Engine3D.Objects;
+using MathExtensions;
 
 namespace Engine3D.Components.Transform
 {
@@ -227,6 +228,127 @@ namespace Engine3D.Components.Transform
         {
             RotateAroundPoint(point, rotationAxis, angle);
             RotateAroundAxis(rotationAxis, angle);
+        }
+
+        public void DirectAxisByVector(Vector3 localAxis, Vector3 directionVector)
+        {
+            if (!VectorExtension.IsNormal(localAxis) && localAxis.Length() != 0)
+            {
+                throw new ArgumentException($"LocalAxis is invalid; localAxis = {localAxis}");
+            }
+            if (!VectorExtension.IsNormal(directionVector) && directionVector.Length() != 0)
+            {
+                throw new ArgumentException($"DirectionVector is invalid; directionVector = {directionVector}");
+            }
+
+            localAxis = Vector3.Normalize(localAxis);
+            directionVector = Vector3.Normalize(directionVector);
+
+            float angle = VectorExtension.GetAngleBetweenVectors(localAxis, directionVector);
+            Vector3 rotationAxis = Vector3.Cross(directionVector, localAxis);
+
+            if (rotationAxis.Length() == 0 || !rotationAxis.IsNormal())
+            {
+                //directionVeector and localAxis are parallel => rotationAxis = perpendicular vector for dirVec ans locAxis
+
+                float sum = directionVector.X + directionVector.Y + directionVector.Z;
+                float notZeroCoordinate;
+
+                if (directionVector.X != 0)
+                {
+                    notZeroCoordinate = directionVector.X;
+                }
+                else if (directionVector.Y != 0)
+                {
+                    notZeroCoordinate = directionVector.Y;
+                }
+                else
+                {
+                    notZeroCoordinate = directionVector.Z;
+                }
+
+                float offsetX = -((sum - notZeroCoordinate) / notZeroCoordinate);
+                rotationAxis = Vector3.Normalize(new Vector3(offsetX, 1, 1));
+            }
+
+            Vector3 rotatedVector1 = Quaternion.RotateVector(localAxis, rotationAxis, angle);
+            Vector3 rotatedVector2 = Quaternion.RotateVector(localAxis, rotationAxis, -angle);
+
+            //TODO: fix crutch
+            if (Math.Round(VectorExtension.GetAngleBetweenVectors(rotatedVector1, directionVector)) == 0)
+            {
+                RotateAroundAxis(rotationAxis, angle);
+            }
+            else if (Math.Round(VectorExtension.GetAngleBetweenVectors(rotatedVector2, directionVector)) == 0)
+            {
+                RotateAroundAxis(rotationAxis, -angle);
+            }
+            else
+            {
+                throw new InvalidOperationException(
+                    $"Can't direct axis by vector; " +
+                    $"directionVector = {directionVector}" +
+                    $"rotatedVector1 = {rotatedVector1}" +
+                    $"rotatedVector2 = {rotatedVector2}");
+            }
+        }
+
+        public void DirectAxisByPosition(Vector3 localAxis, Vector3 worldPoint)
+        {
+            Vector3 directionVector = Vector3.Normalize(worldPoint - Position);
+
+            DirectAxisByVector(localAxis, directionVector);
+        }
+
+        /// <summary>
+        /// Converts Position from local to world
+        /// </summary>
+        /// <param name="localPosition"></param>
+        /// <returns></returns>
+        public Vector3 ConvertPositionFromLocalToWorld(Vector3 localPosition)
+        {
+            Vector3 worldVector = ConvertVectorFromLocalToWorld(AxisX, AxisY, AxisZ, localPosition);
+
+            return Position + worldVector;
+        }
+
+        /// <summary>
+        /// Converts Position from world to local
+        /// </summary>
+        /// <param name="worldPosition"></param>
+        /// <returns></returns>
+        public Vector3 ConvertPositionFromWorldToLocal(Vector3 worldPosition)
+        {
+            Vector3 localVector = ConvertVectorFromWorldToLocal(AxisX, AxisY, AxisZ, worldPosition);
+
+            return localVector - Position;
+        }
+
+        /// <summary>
+        /// Converts vector from local space to world space (If local space does't rotate ralative world space than local and world vectors are identity)
+        /// </summary>
+        /// <param name="localAxisX">Local AxisX ralative world space</param>
+        /// <param name="localAxisY">Local AxisY ralative world space</param>
+        /// <param name="localAxisZ">Local AxisZ ralative world space</param>
+        /// <param name="localVector">Local Vector you want to convert</param>
+        /// <returns></returns>
+        public static Vector3 ConvertVectorFromLocalToWorld(Vector3 localAxisX, Vector3 localAxisY, Vector3 localAxisZ, Vector3 localVector)
+        {
+            return localVector.X * localAxisX + localVector.Y * localAxisY + localVector.Z * localAxisZ;
+        }
+
+        /// <summary>
+        /// Converts vector from world space to local space (If local space does't rotate ralative world space than local and world vectors are identity)
+        /// </summary>
+        /// <param name="localAxisX">Local AxisX ralative world space</param>
+        /// <param name="localAxisY">Local AxisY ralative world space</param>
+        /// <param name="localAxisZ">Local AxisZ ralative world space</param>
+        /// <param name="worldVector">World Vector you want to convert</param>
+        /// <returns></returns>
+        public static Vector3 ConvertVectorFromWorldToLocal(Vector3 localAxisX, Vector3 localAxisY, Vector3 localAxisZ, Vector3 worldVector)
+        {
+            //TODO: realize method
+            throw new NotImplementedException();
         }
     }
 }
