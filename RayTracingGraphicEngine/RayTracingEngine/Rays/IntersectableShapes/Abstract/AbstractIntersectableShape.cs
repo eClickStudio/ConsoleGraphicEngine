@@ -1,8 +1,8 @@
-﻿using RayTracingGraphicEngine3D.Rays.Intersections;
+﻿using RayTracingGraphicEngine3D.RayTracingEngine.Rays.Intersections;
 using Engine3D.Components.Transform;
 using Engine3D.ChangeTriggers;
 
-namespace RayTracingGraphicEngine3D.Rays.IntersectableShapes.Abstract
+namespace RayTracingGraphicEngine3D.RayTracingEngine.Rays.IntersectableShapes.Abstract
 {
     public abstract class AbstractIntersectableShape : AbstractChangebleUpdateble, IIntersectableShape
     {

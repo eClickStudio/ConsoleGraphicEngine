@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace RayTracingGraphicEngine3D.Components.Camera
+namespace RayTracingGraphicEngine3D.RayTracingEngine.Components.Camera
 {
     public struct CameraCharSet
     {

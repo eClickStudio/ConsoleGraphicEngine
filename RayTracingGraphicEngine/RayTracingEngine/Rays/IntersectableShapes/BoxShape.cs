@@ -1,6 +1,6 @@
-﻿using RayTracingGraphicEngine3D.Rays.IntersectableShapes.Abstract;
-using RayTracingGraphicEngine3D.Rays.Intersections;
-using RayTracingGraphicEngine3D.Tools;
+﻿using RayTracingGraphicEngine3D.RayTracingEngine.Rays.IntersectableShapes.Abstract;
+using RayTracingGraphicEngine3D.RayTracingEngine.Rays.Intersections;
+using RayTracingGraphicEngine3D.RayTracingEngine.Tools;
 using Engine3D.Components.Transform;
 using System;
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ using System.Numerics;
 using MathExtensions;
 using RayTracingGraphicEngine3D.RayTracingEngine.Configurations;
 
-namespace RayTracingGraphicEngine3D.Rays.IntersectableShapes
+namespace RayTracingGraphicEngine3D.RayTracingEngine.Rays.IntersectableShapes
 {
     public class BoxShape : AbstractIntersectableShape
     {
@@ -74,6 +74,12 @@ namespace RayTracingGraphicEngine3D.Rays.IntersectableShapes
                 distances.Add(tF);
             }
 
+            if (distances.Count == 0)
+            {
+                //TODO: TEST: May be its a crutch
+                return null;
+            }
+
             float minDistance = distances.Min();
 
             Vector3 nearestIntersection = ray.Origin + ray.Direction * minDistance;
@@ -84,7 +90,14 @@ namespace RayTracingGraphicEngine3D.Rays.IntersectableShapes
             Vector3 zxy = new Vector3(t1.Z, t1.X, t1.Y);
             direction = -ray.Direction.Sign() * t1.Step(yzx) * t1.Step(zxy);
 
-            Ray normalRay = new Ray(nearestIntersection + direction * Configurations.MIN_RAY_STEP, direction);
+            if (direction == Vector3.Zero)
+            {
+                Console.WriteLine(-ray.Direction.Sign());
+                Console.WriteLine(t1.Step(yzx));
+                Console.WriteLine(t1.Step(zxy));
+            }
+
+            Ray normalRay = new Ray(nearestIntersection + direction * Configurations.Configurations.MIN_RAY_STEP, direction);
 
             //TODO: didPassThroughtEnvironment should only be true if the ray is propagating through the inside of the shape.
             return new ShapeIntersection(minDistance, true, normalRay);

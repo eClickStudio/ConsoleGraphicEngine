@@ -1,7 +1,7 @@
 ﻿using RayTracingGraphicEngine3D.Abstract.Scenes;
-using RayTracingGraphicEngine3D.Components.Camera.Abstract;
-using RayTracingGraphicEngine3D.Components.Light.Abstract;
-using RayTracingGraphicEngine3D.Scenes;
+using RayTracingGraphicEngine3D.RayTracingEngine.Components.Camera.Abstract;
+using RayTracingGraphicEngine3D.RayTracingEngine.Components.Light.Abstract;
+using RayTracingGraphicEngine3D.RayTracingEngine.Scenes;
 using System;
 using System.Threading.Tasks;
 

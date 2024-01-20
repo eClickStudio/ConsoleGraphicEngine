@@ -1,4 +1,4 @@
-﻿namespace RayTracingGraphicEngine3D.Rays.Intersections
+﻿namespace RayTracingGraphicEngine3D.RayTracingEngine.Rays.Intersections
 {
     public readonly struct FullIntersection
     {

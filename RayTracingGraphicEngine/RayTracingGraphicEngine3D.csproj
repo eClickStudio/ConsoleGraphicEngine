@@ -61,11 +61,12 @@
   <ItemGroup>
     <Compile Include="Abstract\AbstractGraphicEngine.cs" />
     <Compile Include="Abstract\IGraphicEngine.cs" />
-    <Compile Include="RayTracingEngine\Components\Camera\Abstract\AbstractCamera.cs" />
+    <Compile Include="RayTracingEngine\Components\Camera\Abstract\AbstractRayTracingCamera.cs" />
     <Compile Include="RayTracingEngine\Components\Camera\Abstract\ICamera.cs" />
     <Compile Include="RayTracingEngine\Components\Camera\Abstract\IRayTracingCamera.cs" />
     <Compile Include="RayTracingEngine\Components\Camera\CameraCharSet.cs" />
-    <Compile Include="RayTracingEngine\Components\Camera\RayTracingCamera.cs" />
+    <Compile Include="RayTracingEngine\Components\Camera\FishEyeCamera.cs" />
+    <Compile Include="RayTracingEngine\Components\Camera\OrthogonalCamera.cs" />
     <Compile Include="RayTracingEngine\Components\Intersectable\IIntersectableComponent.cs" />
     <Compile Include="RayTracingEngine\Components\Light\Abstract\AbstractLight.cs" />
     <Compile Include="RayTracingEngine\Components\Light\Abstract\IDirectionLight.cs" />

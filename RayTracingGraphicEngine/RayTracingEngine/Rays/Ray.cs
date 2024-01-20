@@ -1,7 +1,8 @@
-﻿using System;
+﻿using MathExtensions;
+using System;
 using System.Numerics;
 
-namespace RayTracingGraphicEngine3D.Rays
+namespace RayTracingGraphicEngine3D.RayTracingEngine.Rays
 {
     public struct Ray
     {
@@ -15,7 +16,7 @@ namespace RayTracingGraphicEngine3D.Rays
             get => _origin;
             set
             {
-                if (value.X == float.NaN || value.Y == float.NaN || value.Z == float.NaN)
+                if (!value.IsNormal())
                 {
                     throw new ArgumentException("Origin of ray cannot be NaN!");
                 }
@@ -38,8 +39,7 @@ namespace RayTracingGraphicEngine3D.Rays
             }
             set
             {
-                if (value == Vector3.Zero
-                    || value.X == float.NaN || value.Y == float.NaN || value.Z == float.NaN)
+                if (value == Vector3.Zero || !value.IsNormal())
                 {
                     throw new ArgumentException("Direction of ray cannot be NaN and zero!");
                 }

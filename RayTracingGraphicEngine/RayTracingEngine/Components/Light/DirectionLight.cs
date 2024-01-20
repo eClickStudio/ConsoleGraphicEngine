@@ -1,40 +1,63 @@
-﻿using RayTracingGraphicEngine3D.Components.Light.Abstract;
+﻿using Engine3D.Components.Transform;
+using Engine3D.Objects;
+using MathExtensions;
+using RayTracingGraphicEngine3D.RayTracingEngine.Components.Light.Abstract;
 using System;
 using System.Numerics;
 
-namespace RayTracingGraphicEngine3D.Components.Light
+namespace RayTracingGraphicEngine3D.RayTracingEngine.Components.Light
 {
     public class DirectionLight : AbstractLight, IDirectionLight
     {
         //TODO: light direction must be depended on transform rotation
 
-        private Vector3 _direction;
-        public Vector3 Direction
+        private Vector3 _localDirection;
+        public Vector3 LocalDirection
         {
-            get
+            get => _localDirection;
+            set 
             {
-                return _direction;
-            }
-            set
-            {
-                if (value == Vector3.Zero)
+                if (_localDirection != value)
                 {
-                    throw new ArgumentException($"Direction of light is invalid; " +
-                        $"Value can not be = (0, 0, 0); Value you want to set {value}");
-                }
+                    Vector3 direction = Vector3.Normalize(value);
 
-                if (_direction != value)
-                {
-                    _direction = Vector3.Normalize(value);
+                    if (!direction.IsNormal())
+                    {
+                        throw new ArgumentException($"Direction of light is invalid;\n" +
+                            $"Value you want to set {direction}");
+                    }
+
+                    _localDirection = direction;
 
                     OnChanged();
                 }
             }
         }
 
+        public Vector3 WorldDirection { get; private set; }
+
         public DirectionLight(Vector3 direction, float intensity) : base(intensity)
         {
-            Direction = direction;
+            if (direction == Vector3.Zero || !direction.IsNormal())
+            {
+                throw new ArgumentException($"Direction of light is invalid;\n" +
+                    $"Value you want to set {direction}");
+            }
+
+            _localDirection = direction;
+            WorldDirection = direction;
+
+            OnAttachedToObjectEvent += OnParentObjectSet;
+        }
+
+        private void OnParentObjectSet(IObject3D parentObject)
+        {
+            parentObject.Transform.OnRotationChangedEvent += UpdateLightDirection;
+        }
+
+        private void UpdateLightDirection()
+        {
+            WorldDirection = ParentObject.Transform.ConvertVectorFromLocalToWorld(LocalDirection);
         }
     }
 }

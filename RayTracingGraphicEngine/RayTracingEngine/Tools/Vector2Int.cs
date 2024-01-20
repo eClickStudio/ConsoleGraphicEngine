@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Numerics;
 
-namespace RayTracingGraphicEngine3D.Tools
+namespace RayTracingGraphicEngine3D.RayTracingEngine.Tools
 {
     /// <summary>
     /// Struct stores x and y position

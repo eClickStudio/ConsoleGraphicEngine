@@ -1,14 +1,15 @@
 ﻿using Engine3D.Components.Abstract;
 using Engine3D.Components.Transform;
 using Engine3D.Objects;
-using RayTracingGraphicEngine3D.Components.Camera;
-using RayTracingGraphicEngine3D.Components.Light;
-using RayTracingGraphicEngine3D.Components.Light.Abstract;
-using RayTracingGraphicEngine3D.Components.Rendering;
-using RayTracingGraphicEngine3D.Components.Rendering.Abstract;
-using RayTracingGraphicEngine3D.Rays;
-using RayTracingGraphicEngine3D.Rays.IntersectableShapes;
-using RayTracingGraphicEngine3D.Tools;
+using RayTracingGraphicEngine3D.RayTracingEngine.Components.Camera;
+using RayTracingGraphicEngine3D.RayTracingEngine.Components.Light;
+using RayTracingGraphicEngine3D.RayTracingEngine.Components.Light.Abstract;
+using RayTracingGraphicEngine3D.RayTracingEngine.Components.Rendering;
+using RayTracingGraphicEngine3D.RayTracingEngine.Components.Rendering.Abstract;
+using RayTracingGraphicEngine3D.RayTracingEngine.Rays;
+using RayTracingGraphicEngine3D.RayTracingEngine.Rays.IntersectableShapes;
+using RayTracingGraphicEngine3D.RayTracingEngine.Components.Camera;
+using RayTracingGraphicEngine3D.RayTracingEngine.Tools;
 using System.Numerics;
 using System.Runtime.InteropServices;
 
@@ -25,10 +26,16 @@ namespace RayTracingGraphicEngine3D.Samples
         }
 
         #region Rendering
-        public static IObject3D GetCamera(string name, Vector2Int resolution, Vector2Int charSize, Vector2 cameraAngle, CameraCharSet charSet)
+        public static IObject3D GetFishEyeCamera(string name, Vector2Int resolution, Vector2Int charSize, Vector2 cameraAngle, CameraCharSet charSet)
         {
             return CreateObject(name,
-                new RayTracingCamera(resolution, charSize, cameraAngle, charSet));
+                new FishEyeCamera(resolution, charSize, cameraAngle, charSet));
+        }
+
+        public static IObject3D GetOrthogonalCamera(string name, Vector2Int resolution, Vector2Int charSize, Vector2 cameraSize, CameraCharSet charSet)
+        {
+            return CreateObject(name,
+                new OrthogonalCamera(resolution, charSize, cameraSize, charSet));
         }
 
         public static IObject3D GetDirectionLight(string name, Vector3 direction, float intensity)

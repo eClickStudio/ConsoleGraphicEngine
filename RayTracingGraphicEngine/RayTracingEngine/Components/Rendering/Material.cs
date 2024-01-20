@@ -1,7 +1,7 @@
 ﻿using MathExtensions;
 using System;
 
-namespace RayTracingGraphicEngine3D.Components.Rendering
+namespace RayTracingGraphicEngine3D.RayTracingEngine.Components.Rendering
 {
     /// <summary>
     /// Optical properties of object
@@ -81,6 +81,16 @@ namespace RayTracingGraphicEngine3D.Components.Rendering
         }
 
         //TODO: distance to half ray intansity concrete
+
+        public static bool operator ==(Material a, Material b)
+        {
+            return a.Equals(b);
+        }
+
+        public static bool operator !=(Material a, Material b)
+        {
+            return !a.Equals(b);
+        }
 
         public static Material Solid => new Material(0.6f, 0);
         public static Material Water => new Material(0.75f, 100);

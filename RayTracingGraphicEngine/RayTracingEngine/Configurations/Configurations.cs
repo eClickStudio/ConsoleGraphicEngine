@@ -1,6 +1,6 @@
 ﻿namespace RayTracingGraphicEngine3D.RayTracingEngine.Configurations
 {
-    internal static class Configurations
+    public static class Configurations
     {
         //TODO: save config in xml or js file
 

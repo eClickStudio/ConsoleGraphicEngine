@@ -2,7 +2,6 @@
 using Engine3D.Components.Transform;
 using Engine3D.Components.Abstract;
 
-//Here you can add your custom scripts
 namespace ConsoleRayTracingRenderer.Scripts
 {
     internal class TransformRotator : AbstractComponent

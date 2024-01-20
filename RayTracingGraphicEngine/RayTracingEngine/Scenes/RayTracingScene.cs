@@ -1,28 +1,81 @@
 ﻿using Engine3D.Objects;
 using Engine3D.Scenes;
 using System.Collections.Generic;
-using RayTracingGraphicEngine3D.Rays;
-using RayTracingGraphicEngine3D.Components.Light.Abstract;
-using RayTracingGraphicEngine3D.Components.Camera.Abstract;
+using RayTracingGraphicEngine3D.RayTracingEngine.Rays;
+using RayTracingGraphicEngine3D.RayTracingEngine.Components.Light.Abstract;
+using RayTracingGraphicEngine3D.RayTracingEngine.Components.Camera.Abstract;
 using RayTracingGraphicEngine3D.Abstract.Scenes;
 using System;
 using Engine3D.Components.Abstract;
+using RayTracingGraphicEngine3D.RayTracingEngine.Components.Rendering;
 
-namespace RayTracingGraphicEngine3D.Scenes
+namespace RayTracingGraphicEngine3D.RayTracingEngine.Scenes
 {
     //TODO: fix ObjectRenderers must be list of intersectables
     public class RayTracingScene : Scene, IRenderableScene<IRayTracingCamera>
     {
-        public IRayTracingCamera MainCamera { get; set; }
+        private Material _environmentMaterial;
 
-        public IDirectionLight GlobalLight { get; set; }
+        /// <summary>
+        /// Outside material
+        /// </summary>
+        public Material EnvironmentMaterial 
+        {
+            get => _environmentMaterial;
+            set
+            {
+                if (value != _environmentMaterial)
+                {
+                    _environmentMaterial = value;
+
+                    if (MainCamera != null)
+                    {
+                        MainCamera.SceneEnvironmentMaterial = _environmentMaterial;
+                    }
+
+                    OnChanged();
+                }
+            }
+        }
+
+        private IRayTracingCamera _mainCamera;
+        public IRayTracingCamera MainCamera
+        {
+            get => _mainCamera;
+            set
+            {
+                if (_mainCamera != value)
+                {
+                    _mainCamera = value;
+                    _mainCamera.SceneEnvironmentMaterial = EnvironmentMaterial;
+
+                    OnChanged();
+                }
+            }
+        }
+
+        private IDirectionLight _globalLight;
+        public IDirectionLight GlobalLight
+        {
+            get => _globalLight;
+            set
+            {
+                if (_globalLight != value)
+                {
+                    _globalLight = value;
+
+                    OnChanged();
+                }
+            }
+        }
 
 
         protected readonly List<IIntersectable> _intersectables;
         public IReadOnlyList<IIntersectable> Intersectables => _intersectables;
 
-        public RayTracingScene()
+        public RayTracingScene(Material environmentMaterial)
         {
+            EnvironmentMaterial = environmentMaterial;
             _intersectables = new List<IIntersectable>();
         }
 

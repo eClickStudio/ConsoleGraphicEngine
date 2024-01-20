@@ -1,12 +1,12 @@
-﻿using RayTracingGraphicEngine3D.Rays.IntersectableShapes.Abstract;
-using RayTracingGraphicEngine3D.Rays.Intersections;
+﻿using RayTracingGraphicEngine3D.RayTracingEngine.Rays.IntersectableShapes.Abstract;
+using RayTracingGraphicEngine3D.RayTracingEngine.Rays.Intersections;
 using Engine3D.Components.Transform;
 using System;
 using System.Numerics;
 using MathExtensions;
 using RayTracingGraphicEngine3D.RayTracingEngine.Configurations;
 
-namespace RayTracingGraphicEngine3D.Rays.IntersectableShapes
+namespace RayTracingGraphicEngine3D.RayTracingEngine.Rays.IntersectableShapes
 {
     public class PlaneShape : AbstractIntersectableShape
     {
@@ -77,7 +77,7 @@ namespace RayTracingGraphicEngine3D.Rays.IntersectableShapes
                 return null;
             }
 
-            Ray normalRay = new Ray(ray.Origin + ray.Direction * distance + NormalVector * Configurations.MIN_RAY_STEP, NormalVector);
+            Ray normalRay = new Ray(ray.Origin + ray.Direction * distance + NormalVector * Configurations.Configurations.MIN_RAY_STEP, NormalVector);
             return new ShapeIntersection(distance, false, normalRay);
         }
     }

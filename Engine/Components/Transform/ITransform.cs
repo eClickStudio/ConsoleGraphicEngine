@@ -82,6 +82,20 @@ namespace Engine3D.Components.Transform
         /// <param name="localAxis">Axis you want to direct in local space</param>
         /// <param name="worldPoint">Point in world space</param>
         void DirectAxisByPosition(Vector3 localAxis, Vector3 worldPoint);
+
+        /// <summary>
+        /// Converts vector from local space to world space (If local space does't rotate ralative world space than local and world vectors are identity)
+        /// </summary>
+        /// <param name="localVector">Local Vector you want to convert</param>
+        /// <returns></returns>
+        Vector3 ConvertVectorFromLocalToWorld(Vector3 localVector);
+
+        /// <summary>
+        /// Converts vector from world space to local space (If local space does't rotate ralative world space than local and world vectors are identity)
+        /// </summary>
+        /// <param name="worldVector">World Vector you want to convert</param>
+        /// <returns></returns>
+        Vector3 ConvertVectorFromWorldToLocal(Vector3 worldVector);
         #endregion
     }
 }

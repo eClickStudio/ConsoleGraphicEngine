@@ -1,9 +1,9 @@
 ﻿using System.Numerics;
 using System;
-using RayTracingGraphicEngine3D.Rays;
+using RayTracingGraphicEngine3D.RayTracingEngine.Rays;
 using MathExtensions;
 
-namespace RayTracingGraphicEngine3D.Components.Rendering
+namespace RayTracingGraphicEngine3D.RayTracingEngine.Components.Rendering
 {
     //TODO: check how many iterations it does
     public struct LightRay
@@ -20,7 +20,7 @@ namespace RayTracingGraphicEngine3D.Components.Rendering
             get => _intensity;
             set
             {
-                if (value == float.NaN)
+                if (!value.IsNormal())
                 {
                     throw new ArgumentException("LightRay intensity can not be NaN");
                 }
@@ -36,20 +36,24 @@ namespace RayTracingGraphicEngine3D.Components.Rendering
         /// </summary>
         public uint InteractionCount { get; private set; }
 
-        public LightRay(Ray ray, float intensity, uint interactionCount = 0)
+        public Material EnvironmentMaterial { get; }
+
+        public LightRay(Ray ray, float intensity, Material environmentMaterial, uint interactionCount = 0)
         {
             _intensity = 0;
-            InteractionCount = interactionCount;
 
+            InteractionCount = interactionCount;
+            EnvironmentMaterial = environmentMaterial;
             Ray = ray;
             Intensity = intensity;
         }
 
-        public LightRay(Vector3 origin, Vector3 direction, float intensity, uint interactionCount = 0)
+        public LightRay(Vector3 origin, Vector3 direction, float intensity, Material environmentMaterial, uint interactionCount = 0)
         {
             _intensity = 0;
-            InteractionCount = interactionCount;
 
+            InteractionCount = interactionCount;
+            EnvironmentMaterial = environmentMaterial;
             Ray = new Ray(origin, direction);
             Intensity = intensity;
         }

@@ -1,7 +1,7 @@
 ﻿//using System;
 //using System.Numerics;
 
-//namespace RayTracingGraphicEngine3D.Tools
+//namespace RayTracingGraphicEngine3D.RayTracingEngine.Tools
 //{
 //    public static class Vector3Math
 //    {

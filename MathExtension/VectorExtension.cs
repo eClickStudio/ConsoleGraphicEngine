@@ -51,5 +51,58 @@ namespace MathExtensions
 
             return (float)Math.Acos(MathExtension.Clamp(Vector3.Dot(a, b) / (a.Length() * b.Length()), -1, 1));
         }
+
+        /// <summary>
+        /// Get Rotation Axis. If rotate inputVector by an angle along the rotation axis, you get the resultVector
+        /// </summary>
+        /// <param name="inputVector">Vector you want to rotate</param>
+        /// <param name="resultVector">Input Vector after rotate shold be</param>
+        /// <param name="angle">Rotation angle</param>
+        /// <returns></returns>
+        public static Vector3 GetRotationAxis(Vector3 inputVector, Vector3 resultVector, float angle)
+        {
+            if (!inputVector.IsNormal())
+            {
+                throw new ArgumentException($"inputVector is invalid; inputVector = {inputVector}");
+            }
+
+            if (!resultVector.IsNormal())
+            {
+                throw new ArgumentException($"resultVector is invalid; resultVector = {resultVector}");
+            }
+
+            if (!angle.IsNormal())
+            {
+                throw new ArgumentException($"angle is invalid; angle = {angle}");
+            }
+
+            Vector3 cross = Vector3.Cross(inputVector, resultVector);
+
+            if (!cross.IsNormal() || cross.Length() == 0)
+            {
+                throw new ArithmeticException($"Cross of {inputVector} and {resultVector} = {cross} it's not normal");
+            }
+
+            Vector3 rotationResult1 = Quaternion.RotateVector(inputVector, cross, angle);
+            Vector3 rotationResult2 = Quaternion.RotateVector(inputVector, -cross, angle);
+
+            if (Math.Round(GetAngleBetweenVectors(resultVector, rotationResult1)) == 0)
+            {
+                return cross;
+            }
+            else if (Math.Round(GetAngleBetweenVectors(resultVector, rotationResult2)) == 0)
+            {
+                return -cross;
+            }
+            else
+            {
+                throw new ArithmeticException(
+                    $"Can't find rotationAxis;\n" +
+                    $"resultVector = {resultVector};\n" +
+                    $"rotationResult1 = {rotationResult1};\n" +
+                    $"rotationResult2 = {rotationResult2};"
+                    );
+            }
+        }
     }
 }

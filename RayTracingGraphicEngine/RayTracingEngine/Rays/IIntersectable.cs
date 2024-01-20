@@ -1,4 +1,4 @@
-﻿namespace RayTracingGraphicEngine3D.Rays
+﻿namespace RayTracingGraphicEngine3D.RayTracingEngine.Rays
 {
     public interface IIntersectable
     {

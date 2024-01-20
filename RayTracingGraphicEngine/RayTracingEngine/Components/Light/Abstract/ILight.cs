@@ -1,6 +1,6 @@
 ﻿using Engine3D.Components.Abstract;
 
-namespace RayTracingGraphicEngine3D.Components.Light.Abstract
+namespace RayTracingGraphicEngine3D.RayTracingEngine.Components.Light.Abstract
 {
     public interface ILight : IComponent
     {

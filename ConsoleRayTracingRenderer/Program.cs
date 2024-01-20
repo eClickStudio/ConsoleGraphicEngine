@@ -1,17 +1,18 @@
 ﻿using Commands;
-using RayTracingGraphicEngine3D.Components.Camera;
-using RayTracingGraphicEngine3D.Components.Light;
+using RayTracingGraphicEngine3D.RayTracingEngine.Components.Camera;
+using RayTracingGraphicEngine3D.RayTracingEngine.Components.Light;
 using Engine3D.Objects;
 using System.Numerics;
-using RayTracingGraphicEngine3D.Components.Rendering;
+using RayTracingGraphicEngine3D.RayTracingEngine.Components.Rendering;
 using ConsoleSetter;
-using RayTracingGraphicEngine3D.Tools;
+using RayTracingGraphicEngine3D.RayTracingEngine.Tools;
 using RayTracingGraphicEngine3D;
-using RayTracingGraphicEngine3D.Scenes;
+using RayTracingGraphicEngine3D.RayTracingEngine.Scenes;
 using RayTracingGraphicEngine3D.Samples;
 
 //Scripts
 using ConsoleRayTracingRenderer.Scripts;
+using RayTracingGraphicEngine3D.RayTracingEngine.Components.Light.Abstract;
 
 namespace ConsoleRayTracingRenderer
 {
@@ -23,8 +24,8 @@ namespace ConsoleRayTracingRenderer
 
             ConsoleManager.MaximizeConsole();
 
-            RayTracingGraphicEngine engine = new RayTracingGraphicEngine(Material.Vacuum, 0.1f);
-            engine.LocalScene = GetSolarSystemScene();
+            RayTracingGraphicEngine engine = new RayTracingGraphicEngine(0.1f);
+            engine.LocalScene = GetLightTestScene();
 
             CommandHandler commandManager = new CommandHandler(ConsoleColorSet.BlackGreen);
             commandManager.AddCommand("start", new Command("Strats engine updating", engine.StartUpdating));
@@ -74,36 +75,42 @@ namespace ConsoleRayTracingRenderer
 
         private static RayTracingScene GetScene()
         {
+            RayTracingScene scene = new RayTracingScene(Material.Vacuum);
+
+            IObject3D globalLight = SampleObjectsFactory.GetDirectionLight("DirectionLight", new Vector3(0, 0, 1), 1);
+
+            scene.AddObject(globalLight);
+
+            scene.GlobalLight = globalLight.GetComponent<DirectionLight>();
+
+            //camera--------------------------------------------------------------------------------
             Vector2Int resolution = new Vector2Int(Console.WindowWidth, Console.WindowHeight);
             Vector2Int charSize = new Vector2Int(8, 16);
             CameraCharSet charSet = new CameraCharSet(' ',
                     new char[] { ' ', '.', ':', '!', '/', '(', 'l', '1', 'Z', '4', 'H', '9', 'W', '8', '$', '@' });
             float resolutionAspect = resolution.X / resolution.Y;
 
+            //fishEyeCamera-------------------------------------------------------------------------
             //Vector2 cameraAngle = new Vector2(
-            //        (float)Math.PI * 2,
-            //        (float)Math.PI * 2
+            //        (float)Math.PI / 180 * 40 * resolutionAspect,
+            //        (float)Math.PI / 180 * 40
             //    );
+            //IObject3D fishEyeCamera = SampleObjectsFactory.GetFishEyeCamera("FishEyeCamera", resolution, charSize, cameraAngle, charSet);
 
-            Vector2 cameraAngle = new Vector2(
-                    (float)Math.PI / 180 * 40 * resolutionAspect,
-                    (float)Math.PI / 180 * 40
+            //scene.AddObject(fishEyeCamera);
+            //scene.MainCamera = fishEyeCamera.GetComponent<FishEyeCamera>();
+
+            //orthogonalCamera----------------------------------------------------------------------
+            Vector2 cameraSize = new Vector2(
+                    10 * resolutionAspect,
+                    10
                 );
+            IObject3D orthogonalCamera = SampleObjectsFactory.GetOrthogonalCamera("OrthogonalCamera", resolution, charSize, cameraSize, charSet);
 
-            RayTracingScene scene = new RayTracingScene();
+            scene.AddObject(orthogonalCamera);
+            scene.MainCamera = orthogonalCamera.GetComponent<OrthogonalCamera>();
 
-            IObject3D camera = SampleObjectsFactory.GetCamera("Camera", resolution, charSize, cameraAngle, charSet);
-
-            IObject3D globalLight = SampleObjectsFactory.GetDirectionLight("DirectionLight", new Vector3(1, -0.2f, 0.9f), 1);
-
-            scene.AddObjects(
-                camera,
-                globalLight
-            );
-
-            scene.MainCamera = camera.GetComponent<RayTracingCamera>();
-            scene.GlobalLight = globalLight.GetComponent<DirectionLight>();
-
+            //scene---------------------------------------------------------------------------------
             return scene;
         }
 
@@ -113,20 +120,55 @@ namespace ConsoleRayTracingRenderer
 
             //camera--------------------------------------------------------------------------------
             IObject3D camera = scene.MainCamera.ParentObject;
-            camera.Transform.Position = new Vector3(0, 0, 10);
+            camera.Transform.Position = new Vector3(0, 0, 50);
             camera.Transform.DirectAxisByPosition(Vector3.UnitZ, new Vector3(0, 0, 0));
 
             //objects-------------------------------------------------------------------------------
-            IObject3D sun = SampleObjectsFactory.GetSphereLight("Solar", 0.95f, 2);
+            IObject3D sun = SampleObjectsFactory.GetSphereLight("Solar", 0.95f, 1.5f);
 
-            IObject3D planet = SampleObjectsFactory.GetSphereLight("Planet", 1, 1);
+            //IObject3D planet = SampleObjectsFactory.GetSphere("Planet", Material.Solid, 1);
+            IObject3D planet = SampleObjectsFactory.GetSphereLight("Planet", 0.7f, 1);
             planet.Transform.Position = new Vector3(5, 0, 0);
-            planet.AddComponent(new TransformRotator(true, sun.Transform, Vector3.UnitY, 30));
+            planet.AddComponent(new TransformRotator(true, sun.Transform, Vector3.UnitZ, 30));
+
+            //IObject3D satellite = SampleObjectsFactory.GetSphere("Satellite", Material.Solid, 0.5f);
+            IObject3D satellite = SampleObjectsFactory.GetSphereLight("Satellite", 0.5f, 0.5f);
+            satellite.Transform.Position = new Vector3(3, 0, 0);
+            satellite.AddComponent(new TransformRotator(true, planet.Transform, Vector3.UnitZ, 30));
 
             //scene---------------------------------------------------------------------------------
             scene.AddObjects(
                 sun,
-                planet
+                planet,
+                satellite
+                );
+
+            return scene;
+        }
+
+        private static RayTracingScene GetLightTestScene()
+        {
+            RayTracingScene scene = GetScene();
+
+            //light---------------------------------------------------------------------------------
+            IDirectionLight globalLight = scene.GlobalLight;
+            globalLight.LocalDirection = new Vector3(0, -1, 0);
+            globalLight.Intensity = 1;
+            globalLight.ParentObject.AddComponent(new TransformRotator(new Vector3(1, 1, 1), 30));
+
+            //camera--------------------------------------------------------------------------------
+            IObject3D camera = scene.MainCamera.ParentObject;
+            camera.Transform.Position = new Vector3(0, 10, 5);
+            camera.Transform.DirectAxisByPosition(Vector3.UnitZ, new Vector3(0, 5, 0));
+            camera.AddComponent(new TransformMover(new Vector3(0, 10, 5), new Vector3(0, 50, 5), 5));
+
+            //objects-------------------------------------------------------------------------------
+            IObject3D box = SampleObjectsFactory.GetBox("Box", Material.Solid, new Vector3(10, 1, 10));
+            box.Transform.Position = new Vector3(0, 5, 0);
+
+            //scene---------------------------------------------------------------------------------
+            scene.AddObjects(
+                box
                 );
 
             return scene;

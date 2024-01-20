@@ -19,12 +19,10 @@ namespace Engine3D.Components.Transform
             }
             set
             {
-                if (value.X == float.NaN || value.Y == float.NaN || value.Z == float.NaN)
+                if (!value.IsNormal())
                 {
-                    //TODO: test it Vector3.One * float.NaN
-
-                    throw new ArgumentException($"Position is invalid; " +
-                        $"Position can not be NaN; Value you want to set {value}");
+                    throw new ArgumentException($"Position is invalid;\n" +
+                        $"Value you want to set {value};");
                 }
 
                 if (_position != value)
@@ -57,6 +55,12 @@ namespace Engine3D.Components.Transform
             }
             set
             {
+                if (!value.IsNormal())
+                {
+                    throw new ArgumentException($"Local position is invalid;\n" +
+                        $"Value you want to set {value};");
+                }
+
                 if (_localPosition != value)
                 {
                     _localPosition = value;
@@ -94,10 +98,10 @@ namespace Engine3D.Components.Transform
             }
             private set
             {
-                if (value == Vector3.Zero)
+                if (value == Vector3.Zero || !value.IsNormal())
                 {
-                    throw new ArgumentException($"Axis is invalid; " +
-                        $"Axis can not be = (0, 0, 0); Value you want to set {value}");
+                    throw new ArgumentException($"Axis is invalid;\n" +
+                        $"Value you want to set {value};");
                 }
 
                 value = Vector3.Normalize(value);
@@ -118,10 +122,10 @@ namespace Engine3D.Components.Transform
             }
             private set
             {
-                if (value == Vector3.Zero)
+                if (value == Vector3.Zero || !value.IsNormal())
                 {
-                    throw new ArgumentException($"Axis is invalid; " +
-                        $"Axis can not be = (0, 0, 0); Value you want to set {value}");
+                    throw new ArgumentException($"Axis is invalid;\n" +
+                        $"Value you want to set {value};");
                 }
 
                 value = Vector3.Normalize(value);
@@ -142,10 +146,10 @@ namespace Engine3D.Components.Transform
             }
             private set
             {
-                if (value == Vector3.Zero)
+                if (value == Vector3.Zero || !value.IsNormal())
                 {
-                    throw new ArgumentException($"Axis is invalid; " +
-                        $"Axis can not be = (0, 0, 0); Value you want to set {value}");
+                    throw new ArgumentException($"Axis is invalid;\n" +
+                        $"Value you want to set {value};");
                 }
 
                 value = Vector3.Normalize(value);
@@ -245,51 +249,36 @@ namespace Engine3D.Components.Transform
             directionVector = Vector3.Normalize(directionVector);
 
             float angle = VectorExtension.GetAngleBetweenVectors(localAxis, directionVector);
-            Vector3 rotationAxis = Vector3.Cross(directionVector, localAxis);
+            Vector3 cross = Vector3.Cross(directionVector, localAxis);
 
-            if (rotationAxis.Length() == 0 || !rotationAxis.IsNormal())
+            if (!cross.IsNormal())
+            {
+                throw new ArithmeticException($"Cross is invalid; Cross of {directionVector} and {localAxis} = {cross}");
+            }
+
+            if (cross.Length() == 0)
             {
                 //directionVeector and localAxis are parallel => rotationAxis = perpendicular vector for dirVec ans locAxis
 
-                float sum = directionVector.X + directionVector.Y + directionVector.Z;
-                float notZeroCoordinate;
+                if (directionVector == -localAxis)
+                {
+                    AxisX = -AxisX;
+                    AxisY = -AxisY;
+                    AxisZ = -AxisZ;
 
-                if (directionVector.X != 0)
-                {
-                    notZeroCoordinate = directionVector.X;
-                }
-                else if (directionVector.Y != 0)
-                {
-                    notZeroCoordinate = directionVector.Y;
+                    OnRotationChangedEvent?.Invoke();
+                    OnChanged();
                 }
                 else
                 {
-                    notZeroCoordinate = directionVector.Z;
+                    throw new ArithmeticException($"Can't direct axis by vector; vector = {directionVector}; axis = {localAxis}");
                 }
-
-                float offsetX = -((sum - notZeroCoordinate) / notZeroCoordinate);
-                rotationAxis = Vector3.Normalize(new Vector3(offsetX, 1, 1));
-            }
-
-            Vector3 rotatedVector1 = Quaternion.RotateVector(localAxis, rotationAxis, angle);
-            Vector3 rotatedVector2 = Quaternion.RotateVector(localAxis, rotationAxis, -angle);
-
-            //TODO: fix crutch
-            if (Math.Round(VectorExtension.GetAngleBetweenVectors(rotatedVector1, directionVector)) == 0)
-            {
-                RotateAroundAxis(rotationAxis, angle);
-            }
-            else if (Math.Round(VectorExtension.GetAngleBetweenVectors(rotatedVector2, directionVector)) == 0)
-            {
-                RotateAroundAxis(rotationAxis, -angle);
             }
             else
             {
-                throw new InvalidOperationException(
-                    $"Can't direct axis by vector; " +
-                    $"directionVector = {directionVector}" +
-                    $"rotatedVector1 = {rotatedVector1}" +
-                    $"rotatedVector2 = {rotatedVector2}");
+                Vector3 rotationAxis = VectorExtension.GetRotationAxis(localAxis, directionVector, angle);
+
+                RotateAroundAxis(rotationAxis, angle);
             }
         }
 
@@ -337,6 +326,11 @@ namespace Engine3D.Components.Transform
             return localVector.X * localAxisX + localVector.Y * localAxisY + localVector.Z * localAxisZ;
         }
 
+        public Vector3 ConvertVectorFromLocalToWorld(Vector3 localVector)
+        {
+            return ConvertVectorFromLocalToWorld(AxisX, AxisY, AxisZ, localVector);
+        }
+
         /// <summary>
         /// Converts vector from world space to local space (If local space does't rotate ralative world space than local and world vectors are identity)
         /// </summary>
@@ -349,6 +343,11 @@ namespace Engine3D.Components.Transform
         {
             //TODO: realize method
             throw new NotImplementedException();
+        }
+
+        public Vector3 ConvertVectorFromWorldToLocal(Vector3 localVector)
+        {
+            return ConvertVectorFromWorldToLocal(AxisX, AxisY, AxisZ, localVector);
         }
     }
 }

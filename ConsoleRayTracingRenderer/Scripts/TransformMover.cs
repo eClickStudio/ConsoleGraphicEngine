@@ -117,15 +117,30 @@ namespace ConsoleRayTracingRenderer.Scripts
 
         private void UpdateParentObject(IObject3D parentObject)
         {
-            if (IsMoveToPoint1)
+            Vector3 position = parentObject.Transform.Position;
+
+            if (position == Point1)
+            {
+                _startPosition = Point1;
+                IsMoveToPoint1 = false;
+            }
+            else if (position == Point2)
             {
                 _startPosition = Point2;
-                _moveDirection = Vector3.Normalize(Point1 - parentObject.Transform.Position);
+                IsMoveToPoint1 = true;
             }
             else
             {
-                _startPosition = Point1;
-                _moveDirection = Vector3.Normalize(Point2 - parentObject.Transform.Position);
+                if (IsMoveToPoint1)
+                {
+                    _startPosition = Point2;
+                    _moveDirection = Vector3.Normalize(Point1 - parentObject.Transform.Position);
+                }
+                else
+                {
+                    _startPosition = Point1;
+                    _moveDirection = Vector3.Normalize(Point2 - parentObject.Transform.Position);
+                }
             }
         }
 
@@ -137,6 +152,7 @@ namespace ConsoleRayTracingRenderer.Scripts
             Vector3 moveOffset = _moveDirection * offset;
 
             float progress = Vector3.Distance(_startPosition, position + moveOffset) / Distance;
+
             if (progress >= 1)
             {
                 IsMoveToPoint1 = !IsMoveToPoint1;

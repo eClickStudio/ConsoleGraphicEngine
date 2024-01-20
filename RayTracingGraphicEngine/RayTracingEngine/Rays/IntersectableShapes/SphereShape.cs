@@ -1,5 +1,5 @@
-﻿using RayTracingGraphicEngine3D.Rays.IntersectableShapes.Abstract;
-using RayTracingGraphicEngine3D.Rays.Intersections;
+﻿using RayTracingGraphicEngine3D.RayTracingEngine.Rays.IntersectableShapes.Abstract;
+using RayTracingGraphicEngine3D.RayTracingEngine.Rays.Intersections;
 using Engine3D.Components.Transform;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Numerics;
 using MathExtensions;
 using RayTracingGraphicEngine3D.RayTracingEngine.Configurations;
 
-namespace RayTracingGraphicEngine3D.Rays.IntersectableShapes
+namespace RayTracingGraphicEngine3D.RayTracingEngine.Rays.IntersectableShapes
 {
     public class SphereShape : AbstractIntersectableShape
     {
@@ -86,7 +86,7 @@ namespace RayTracingGraphicEngine3D.Rays.IntersectableShapes
             }
 
             Vector3 direction = Vector3.Normalize(nearestIntersection - transform.Position);
-            Ray NormalRay = new Ray(nearestIntersection + direction * Configurations.MIN_RAY_STEP, direction);
+            Ray NormalRay = new Ray(nearestIntersection + direction * Configurations.Configurations.MIN_RAY_STEP, direction);
 
             //TODO: didPassThroughtEnvironment should only be true if the ray is propagating through the inside of the shape.
             return new ShapeIntersection(minDistance, true, NormalRay);

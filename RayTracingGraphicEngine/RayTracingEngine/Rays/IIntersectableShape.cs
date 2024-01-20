@@ -1,7 +1,7 @@
 ﻿using Engine3D.ChangeTriggers;
-using RayTracingGraphicEngine3D.Rays.Intersections;
+using RayTracingGraphicEngine3D.RayTracingEngine.Rays.Intersections;
 
-namespace RayTracingGraphicEngine3D.Rays
+namespace RayTracingGraphicEngine3D.RayTracingEngine.Rays
 {
     public interface IIntersectableShape : IChangebleUpdateble
     {

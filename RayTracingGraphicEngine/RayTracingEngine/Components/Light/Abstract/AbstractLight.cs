@@ -1,7 +1,8 @@
 ﻿using Engine3D.Components.Abstract;
+using MathExtensions;
 using System;
 
-namespace RayTracingGraphicEngine3D.Components.Light.Abstract
+namespace RayTracingGraphicEngine3D.RayTracingEngine.Components.Light.Abstract
 {
     public class AbstractLight : AbstractComponent, ILight
     {
@@ -14,9 +15,9 @@ namespace RayTracingGraphicEngine3D.Components.Light.Abstract
             }
             set
             {
-                if (value < 0)
+                if (value < 0 || !value.IsNormal())
                 {
-                    throw new ArgumentException($"Intensivety of light is invalid; " +
+                    throw new ArgumentException($"Intensivety of light is invalid;\n" +
                         $"Min = 0; Value you want to set {value}");
                 }
 

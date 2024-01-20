@@ -1,8 +1,8 @@
-﻿using RayTracingGraphicEngine3D.Components.Light.Abstract;
+﻿using RayTracingGraphicEngine3D.RayTracingEngine.Components.Light.Abstract;
 using Engine3D.Scenes;
 using System.Collections.Generic;
-using RayTracingGraphicEngine3D.Rays;
-using RayTracingGraphicEngine3D.Components.Camera.Abstract;
+using RayTracingGraphicEngine3D.RayTracingEngine.Rays;
+using RayTracingGraphicEngine3D.RayTracingEngine.Components.Camera.Abstract;
 
 namespace RayTracingGraphicEngine3D.Abstract.Scenes
 {

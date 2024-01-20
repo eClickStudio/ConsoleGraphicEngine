@@ -1,4 +1,4 @@
-﻿namespace RayTracingGraphicEngine3D.Components.Rendering.Abstract
+﻿namespace RayTracingGraphicEngine3D.RayTracingEngine.Components.Rendering.Abstract
 {
     public interface IRenderer
     {
