@@ -12,6 +12,7 @@
         /// </summary>
         string HierarchyName { get; set; }
 
+        //TODO: getter below should be ReadOnly
         IHierarchyManager<T> Hierarchy { get; }
     }
 }

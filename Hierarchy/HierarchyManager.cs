@@ -17,11 +17,51 @@ namespace Hierarchy
         public IReadOnlyList<T> Children => _children;
 
         public int ChildrenCount => _children.Count;
+        public int AllChildrenCount
+        {
+            get
+            {
+                int count = ChildrenCount;
+
+                foreach (T child in Children)
+                {
+                    count += child.Hierarchy.AllChildrenCount;
+                }
+
+                return count;
+            }
+        }
+
+        public int ChildlessChildrenCount
+        {
+            get
+            {
+                int count = 0;
+
+                foreach (T child in Children)
+                {
+                    if (child.Hierarchy.ChildrenCount == 0)
+                    {
+                        count++;
+                    }
+                    else
+                    {
+                        count += child.Hierarchy.ChildlessChildrenCount;
+                    }
+                }
+
+                return count;
+            }
+        }
+
 
         public int IndexInHierarchy => Parent.Hierarchy.IndexOfChild(HierarchyParent).Value;
 
         public event Action OnHierarchyChangedEvent;
 
+
+        /// <param name="hierarchyParent">parent class contains this hierarchy in code (often 'this')</param>
+        /// <param name="parent">Real hierarchy parent</param>
         public HierarchyManager(in T hierarchyParent, in T parent)
         {
             HierarchyParent = hierarchyParent;

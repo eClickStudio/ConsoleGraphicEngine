@@ -5,7 +5,6 @@ using System.Numerics;
 using RayTracingGraphicEngine3D.RayTracingEngine.Components.Rendering.Abstract;
 using Quaternion = MathExtensions.Quaternion;
 using MathExtensions;
-using RayTracingGraphicEngine3D.RayTracingEngine.Configurations;
 
 namespace RayTracingGraphicEngine3D.RayTracingEngine.Components.Rendering
 {
@@ -51,7 +50,7 @@ namespace RayTracingGraphicEngine3D.RayTracingEngine.Components.Rendering
                 );
             }
 
-            return new LightRay(new Ray(normalRay.Origin, reflectedDirection), reflectedRayIntensity, lightRay.EnvironmentMaterial, lightRay.InteractionCount);
+            return new LightRay(new Ray(normalRay.Origin, reflectedDirection), reflectedRayIntensity, lightRay.EnvironmentMaterial, lightRay.InteractionCount, "reflected", lightRay.Hierarchy.Parent, ParentObject.Name);
         }
 
         public LightRay GetRefractedRay(LightRay lightRay, Ray normalRay)
@@ -84,7 +83,7 @@ namespace RayTracingGraphicEngine3D.RayTracingEngine.Components.Rendering
             }
 
             Vector3 origin = normalRay.Origin - 2 * normalDirection * Configurations.Configurations.MIN_RAY_STEP; 
-            return new LightRay(new Ray(origin, refractedDirection), refractedRayIntensity, Material, lightRay.InteractionCount);
+            return new LightRay(new Ray(origin, refractedDirection), refractedRayIntensity, Material, lightRay.InteractionCount, "refracted", lightRay.Hierarchy.Parent, ParentObject.Name);
         }
     }
 }

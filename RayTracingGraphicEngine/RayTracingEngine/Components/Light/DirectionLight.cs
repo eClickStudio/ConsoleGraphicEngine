@@ -29,6 +29,11 @@ namespace RayTracingGraphicEngine3D.RayTracingEngine.Components.Light
 
                     _localDirection = direction;
 
+                    if (ParentObject != null)
+                    {
+                        UpdateLightDirection();
+                    }
+
                     OnChanged();
                 }
             }

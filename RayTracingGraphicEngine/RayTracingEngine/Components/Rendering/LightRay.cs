@@ -2,11 +2,11 @@
 using System;
 using RayTracingGraphicEngine3D.RayTracingEngine.Rays;
 using MathExtensions;
+using Hierarchy;
 
 namespace RayTracingGraphicEngine3D.RayTracingEngine.Components.Rendering
 {
-    //TODO: check how many iterations it does
-    public struct LightRay
+    public class LightRay : IHierarchyMember<LightRay>
     {
         private float _intensity;
 
@@ -38,29 +38,62 @@ namespace RayTracingGraphicEngine3D.RayTracingEngine.Components.Rendering
 
         public Material EnvironmentMaterial { get; }
 
-        public LightRay(Ray ray, float intensity, Material environmentMaterial, uint interactionCount = 0)
+        //TEST: debug feature; delete when release-------------------------------------------------
+        public string _rayName;
+        public string HierarchyName
         {
-            _intensity = 0;
+            get
+            {
+                return $"{_rayName}) {InteractedShapeName} <=> {Intensity}";
+            }
+            set
+            {
+                _rayName = value;
+            }
+        }
 
-            InteractionCount = interactionCount;
-            EnvironmentMaterial = environmentMaterial;
+        public string InteractedShapeName { get; }
+
+        private HierarchyManager<LightRay> _trace;
+
+        /// <summary>
+        /// Trace of this lightRay's children
+        /// </summary>
+        public IHierarchyManager<LightRay> Hierarchy => _trace;
+        //TEST: end debug features-----------------------------------------------------------------
+
+
+        public LightRay(Ray ray, float intensity, Material environmentMaterial, uint interactionCount, string rayName, in LightRay parentRay, string interactedShapeName)
+        {
             Ray = ray;
             Intensity = intensity;
-        }
-
-        public LightRay(Vector3 origin, Vector3 direction, float intensity, Material environmentMaterial, uint interactionCount = 0)
-        {
-            _intensity = 0;
-
-            InteractionCount = interactionCount;
             EnvironmentMaterial = environmentMaterial;
-            Ray = new Ray(origin, direction);
-            Intensity = intensity;
+            InteractionCount = interactionCount;
+
+            HierarchyName = rayName;
+            InteractedShapeName = interactedShapeName;
+            _trace = new HierarchyManager<LightRay>(this, parentRay);
         }
+
+        public LightRay(Vector3 origin, Vector3 direction, float intensity, Material environmentMaterial, uint interactionCount, string rayName, in LightRay parentRay, string interactedShapeName)
+            : this(new Ray(origin, direction), intensity, environmentMaterial, interactionCount, rayName, parentRay, interactedShapeName) { }
 
         public void Interact()
         {
             InteractionCount++;
+        }
+
+        public void AddHierarchyChildren(in LightRay reflectedRay, in LightRay refractedRay)
+        {
+            if (reflectedRay != null)
+            {
+                _trace.AddChild(reflectedRay);
+            }
+
+            if (refractedRay != null)
+            {
+                _trace.AddChild(refractedRay);
+            }
         }
     }
 }

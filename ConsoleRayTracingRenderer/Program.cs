@@ -90,25 +90,29 @@ namespace ConsoleRayTracingRenderer
                     new char[] { ' ', '.', ':', '!', '/', '(', 'l', '1', 'Z', '4', 'H', '9', 'W', '8', '$', '@' });
             float resolutionAspect = resolution.X / resolution.Y;
 
-            //fishEyeCamera-------------------------------------------------------------------------
-            //Vector2 cameraAngle = new Vector2(
-            //        (float)Math.PI / 180 * 40 * resolutionAspect,
-            //        (float)Math.PI / 180 * 40
-            //    );
-            //IObject3D fishEyeCamera = SampleObjectsFactory.GetFishEyeCamera("FishEyeCamera", resolution, charSize, cameraAngle, charSet);
+            //fishEyeCamera------------------------------------------------------------------------ -
+            float angle = 40;
 
-            //scene.AddObject(fishEyeCamera);
-            //scene.MainCamera = fishEyeCamera.GetComponent<FishEyeCamera>();
-
-            //orthogonalCamera----------------------------------------------------------------------
-            Vector2 cameraSize = new Vector2(
-                    10 * resolutionAspect,
-                    10
+            Vector2 cameraAngle = new Vector2(
+                    (float)Math.PI / 180 * angle * resolutionAspect,
+                    (float)Math.PI / 180 * angle
                 );
-            IObject3D orthogonalCamera = SampleObjectsFactory.GetOrthogonalCamera("OrthogonalCamera", resolution, charSize, cameraSize, charSet);
+            IObject3D fishEyeCamera = SampleObjectsFactory.GetFishEyeCamera("FishEyeCamera", resolution, charSize, cameraAngle, charSet);
 
-            scene.AddObject(orthogonalCamera);
-            scene.MainCamera = orthogonalCamera.GetComponent<OrthogonalCamera>();
+            scene.AddObject(fishEyeCamera);
+            scene.MainCamera = fishEyeCamera.GetComponent<FishEyeCamera>();
+
+            ////orthogonalCamera----------------------------------------------------------------------
+            //float size = 10;
+
+            //Vector2 cameraSize = new Vector2(
+            //        size * resolutionAspect,
+            //        size
+            //    );
+            //IObject3D orthogonalCamera = SampleObjectsFactory.GetOrthogonalCamera("OrthogonalCamera", resolution, charSize, cameraSize, charSet);
+
+            //scene.AddObject(orthogonalCamera);
+            //scene.MainCamera = orthogonalCamera.GetComponent<OrthogonalCamera>();
 
             //scene---------------------------------------------------------------------------------
             return scene;
@@ -152,23 +156,32 @@ namespace ConsoleRayTracingRenderer
 
             //light---------------------------------------------------------------------------------
             IDirectionLight globalLight = scene.GlobalLight;
-            globalLight.LocalDirection = new Vector3(0, -1, 0);
+            globalLight.LocalDirection = new Vector3(0, 1, -1);
             globalLight.Intensity = 1;
             globalLight.ParentObject.AddComponent(new TransformRotator(new Vector3(1, 1, 1), 30));
 
+            Console.WriteLine($"GlobalLightWorldDirection = {globalLight.WorldDirection}");
+
             //camera--------------------------------------------------------------------------------
             IObject3D camera = scene.MainCamera.ParentObject;
-            camera.Transform.Position = new Vector3(0, 10, 5);
-            camera.Transform.DirectAxisByPosition(Vector3.UnitZ, new Vector3(0, 5, 0));
-            camera.AddComponent(new TransformMover(new Vector3(0, 10, 5), new Vector3(0, 50, 5), 5));
+            camera.Transform.Position = new Vector3(0, 5, 5);
+            camera.Transform.DirectAxisByPosition(Vector3.UnitZ, new Vector3(0, 0, 0));
+            //camera.AddComponent(new TransformMover(new Vector3(0, 10, 5), new Vector3(0, 50, 5), 5));
+
+            Console.WriteLine($"CameraAxisX = {camera.Transform.AxisX}");
+            Console.WriteLine($"CameraAxisY = {camera.Transform.AxisY}");
+            Console.WriteLine($"CameraAxisZ = {camera.Transform.AxisZ}");
 
             //objects-------------------------------------------------------------------------------
-            IObject3D box = SampleObjectsFactory.GetBox("Box", Material.Solid, new Vector3(10, 1, 10));
-            box.Transform.Position = new Vector3(0, 5, 0);
+            IObject3D box = SampleObjectsFactory.GetBox("Box", Material.Solid, new Vector3(2, 2, 2));
+            box.Transform.Position = new Vector3(0, 0, 0);
+
+            IObject3D sphere = SampleObjectsFactory.GetSphere("Sphere", Material.Glass, 1);
+            sphere.Transform.Position = new Vector3(0, 0, 0);
 
             //scene---------------------------------------------------------------------------------
             scene.AddObjects(
-                box
+                sphere
                 );
 
             return scene;

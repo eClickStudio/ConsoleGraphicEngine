@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using MathExtensions;
-using RayTracingGraphicEngine3D.RayTracingEngine.Configurations;
 
 namespace RayTracingGraphicEngine3D.RayTracingEngine.Rays.IntersectableShapes
 {
@@ -50,8 +49,8 @@ namespace RayTracingGraphicEngine3D.RayTracingEngine.Rays.IntersectableShapes
             Vector3 position = transform.Position;
             ray.Origin = ray.Origin -= position;
 
-            Vector3 m = new Vector3(1f / ray.Direction.X, 1f / ray.Direction.Y, 1f / ray.Direction.Z); // can precompute if traversing a set of aligned boxes
-            Vector3 n = m * ray.Origin;   // can precompute if traversing a set of aligned boxes
+            Vector3 m = new Vector3(1f / ray.Direction.X, 1f / ray.Direction.Y, 1f / ray.Direction.Z);
+            Vector3 n = m * ray.Origin;
             Vector3 k = Vector3.Abs(m) * Size;
             Vector3 t1 = -n - k;
             Vector3 t2 = -n + k;
@@ -76,7 +75,7 @@ namespace RayTracingGraphicEngine3D.RayTracingEngine.Rays.IntersectableShapes
 
             if (distances.Count == 0)
             {
-                //TODO: TEST: May be its a crutch
+                //if tN or tF < 0 it means that the point of intersection lies opposite the direction of the vector
                 return null;
             }
 
@@ -84,81 +83,35 @@ namespace RayTracingGraphicEngine3D.RayTracingEngine.Rays.IntersectableShapes
 
             Vector3 nearestIntersection = ray.Origin + ray.Direction * minDistance;
 
-            Vector3 direction;
+            Vector3 normalRayDirection;
 
-            Vector3 yzx = new Vector3(t1.Y, t1.Z, t1.X);
-            Vector3 zxy = new Vector3(t1.Z, t1.X, t1.Y);
-            direction = -ray.Direction.Sign() * t1.Step(yzx) * t1.Step(zxy);
-
-            if (direction == Vector3.Zero)
+            if (tN > 0)
             {
-                Console.WriteLine(-ray.Direction.Sign());
-                Console.WriteLine(t1.Step(yzx));
-                Console.WriteLine(t1.Step(zxy));
+                //Ray origin outside box
+                normalRayDirection = VectorExtension.Step(Vector3.One * tN, t1);
+            }
+            else
+            {
+                //Ray origin inside box
+                normalRayDirection = VectorExtension.Step(t2, Vector3.One * tF);
             }
 
-            Ray normalRay = new Ray(nearestIntersection + direction * Configurations.Configurations.MIN_RAY_STEP, direction);
+            //Vector3 yzx = new Vector3(t1.Y, t1.Z, t1.X);
+            //Vector3 zxy = new Vector3(t1.Z, t1.X, t1.Y);
+            //normalRayDirection = -ray.Direction.Sign() * t1.Step(yzx) * t1.Step(zxy);
 
-            //TODO: didPassThroughtEnvironment should only be true if the ray is propagating through the inside of the shape.
+            if (normalRayDirection == Vector3.Zero)
+            {
+                //TEST: dele this
+                Console.WriteLine("zero man");
+                //Console.WriteLine(-ray.Direction.Sign());
+                //Console.WriteLine(t1.Step(yzx));
+                //Console.WriteLine(t1.Step(zxy));
+            }
+
+            Ray normalRay = new Ray(nearestIntersection + normalRayDirection * Configurations.Configurations.MIN_RAY_STEP, normalRayDirection);
+
             return new ShapeIntersection(minDistance, true, normalRay);
         }
-
-        //public override IReadOnlyList<float> GetIntersectionDistances(Ray ray)
-        //{
-        //    Vector3 position = transform.Position;
-        //    ray.Origin = ray.Origin -= position;
-
-        //    Vector3 m = new Vector3(1f / ray.Direction.X, 1f / ray.Direction.Y, 1f / ray.Direction.Z); // can precompute if traversing a set of aligned boxes
-        //    Vector3 n = m * ray.Origin;   // can precompute if traversing a set of aligned boxes
-        //    Vector3 k = Vector3.Abs(m) * Size;
-        //    Vector3 t1 = -n - k;
-        //    Vector3 t2 = -n + k;
-        //    float tN = Math.Max(Math.Max(t1.X, t1.Y), t1.Z);
-        //    float tF = Math.Min(Math.Min(t2.X, t2.Y), t2.Z);
-
-        //    if (tN > tF || tF < 0)
-        //    {
-        //        return null;
-        //    }
-
-        //    List<float> intersectionDistances = new List<float>();
-
-        //    if (tN > 0)
-        //    {
-        //        intersectionDistances.Add(tN);
-        //    }
-        //    if (tF > 0 && tN != tF)
-        //    {
-        //        intersectionDistances.Add(tF);
-        //    }
-
-        //    return intersectionDistances;
-        //}
-
-        //public override Ray GetNormal(Ray ray)
-        //{
-        //    Vector3? nearestIntersection = GetNearestIntersection(ray);
-
-        //    if (!nearestIntersection.HasValue)
-        //    {
-        //        return null;
-        //    }
-
-        //    Vector3 position = transform.Position;
-        //    ray.Origin -= position;
-
-        //    Vector3 m = new Vector3(1f / ray.Direction.X, 1f / ray.Direction.Y, 1f / ray.Direction.Z); // can precompute if traversing a set of aligned boxes
-        //    Vector3 n = m * ray.Origin;   // can precompute if traversing a set of aligned boxes
-        //    Vector3 k = Vector3.Abs(m) * Size;
-        //    Vector3 t1 = -n - k;
-
-        //    Vector3 direction;
-
-        //    Vector3 yzx = new Vector3(t1.Y, t1.Z, t1.X);
-        //    Vector3 zxy = new Vector3(t1.Z, t1.X, t1.Y);
-        //    direction = -Vector3Math.Sign(ray.Direction) * Vector3Math.Step(yzx, t1) * Vector3Math.Step(zxy, t1);
-
-        //    return new Ray(nearestIntersection.Value + direction * MIN_RAY_STEP, direction);
-        //}
     }
 }

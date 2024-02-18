@@ -51,8 +51,27 @@ namespace RayTracingGraphicEngine3D
                     LightRay lightRay = camera.GetRay(screenPosition);
 
                     //TODO: check camera position and return right environment material; May be ray should return result if it intersect inside or outside renderer shape
-                    float pixelColor = RenderRay(lightRay);
+
+                    float pixelColor = 0;
+
+                    try
+                    {
+                        pixelColor = RenderRay(lightRay);
+                    }
+                    catch (StackOverflowException)
+                    {
+                        Console.WriteLine("---------StackOverflow------------------------");
+                        lightRay.Hierarchy.PrintHierarchy();
+                    }
+
                     char pixelChar = camera.GetChar(pixelColor);
+
+                    //if (lightRay.Hierarchy.AllChildrenCount > 1 && pixelChar == ' ')
+                    //{
+                    //    Console.WriteLine("---------Iteration------------------------");
+                    //    Console.WriteLine($"Result intensity = {pixelColor}");
+                    //    lightRay.Hierarchy.PrintHierarchy();
+                    //}
 
                     screen[x + y * camera.Resolution.X] = pixelChar;
                 }
@@ -71,6 +90,9 @@ namespace RayTracingGraphicEngine3D
             {
                 ray.Interact();
 
+                LightRay reflectedRay = null;
+                LightRay refractedRay = null;
+
                 float absorptionCoefficient = GetAbsorptionCoefficient(ray.EnvironmentMaterial, intersection.Value.ShapeIntersection.MinIntersectionDistance);
                 ray.Intensity /= absorptionCoefficient;
 
@@ -86,14 +108,25 @@ namespace RayTracingGraphicEngine3D
                 else if (intersection.Value.Intersectable is IShapeRenderer renderer)
                 {
                     Ray normalRay = intersection.Value.ShapeIntersection.NormalRay;
+                    float intensity = 0;
 
-                    LightRay reflectedRay = renderer.GetReflectedRay(ray, normalRay);
-                    float reflectedRayIntensity = RenderRay(reflectedRay);
+                    if (ray.EnvironmentMaterial != renderer.Material)
+                    {
+                        reflectedRay = renderer.GetReflectedRay(ray, normalRay);
+                        intensity += RenderRay(reflectedRay);
+                    }
 
-                    LightRay refractedRay = renderer.GetRefractedRay(ray, normalRay);
-                    float refractedRayIntensity = RenderRay(refractedRay);
+                    if (intersection.Value.ShapeIntersection.DidPassThroughtEnvironment 
+                        && ray.EnvironmentMaterial.ReflectiveIndex != 0 
+                        && renderer.Material.ReflectiveIndex != 0)
+                    {
+                        refractedRay = renderer.GetRefractedRay(ray, normalRay);
+                        intensity += RenderRay(refractedRay);
+                    }
 
-                    return reflectedRayIntensity + refractedRayIntensity;
+                    ray.AddHierarchyChildren(reflectedRay, refractedRay);
+
+                    return intensity;
                 }
             }
             else if (ray.InteractionCount > 0)
@@ -101,7 +134,14 @@ namespace RayTracingGraphicEngine3D
                 IDirectionLight globalLight = LocalScene.GlobalLight;
                 float directionLightIntensity = Vector3.Dot(-ray.Ray.Direction, globalLight.WorldDirection) * globalLight.Intensity;
 
-                return ray.Intensity + directionLightIntensity;
+                if (directionLightIntensity >= 0)
+                {
+                    return ray.Intensity + directionLightIntensity;
+                }
+                else
+                {
+                    return ray.Intensity;
+                }
             }
 
             return 0;

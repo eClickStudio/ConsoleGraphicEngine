@@ -86,7 +86,7 @@ namespace RayTracingGraphicEngine3D.RayTracingEngine.Components.Camera.Abstract
                 _environmentMaterial = GetEnvironmentMaterial();
             }
 
-            return new LightRay(CreateRay(GetRelativePosition(screenPosition)), 1, _environmentMaterial.Value, 0);
+            return new LightRay(CreateRay(GetRelativePosition(screenPosition)), 1, _environmentMaterial.Value, 0, "camera", null, "camera");
         }
 
         protected abstract Ray CreateRay(Vector2 relativePosition);
@@ -114,7 +114,19 @@ namespace RayTracingGraphicEngine3D.RayTracingEngine.Components.Camera.Abstract
 
             y *= ResolutionAspect * CharAspect;
 
+            //Console.WriteLine($"Relative position = {new Vector2(x, y)}");
+
             return new Vector2(x, y);
+
+            ////Before:
+            //float x = (float)screenPosition.X / Resolution.X * 2 - 1;
+            //float y = 1 - (float)screenPosition.Y / Resolution.Y * 2;
+
+            //y *= ResolutionAspect * CharAspect;
+
+            //Console.WriteLine($"Relative position = {new Vector2(x, y)}");
+
+            //return new Vector2(x, y);
         }
 
         protected override void SubUpdate(uint frameTime)

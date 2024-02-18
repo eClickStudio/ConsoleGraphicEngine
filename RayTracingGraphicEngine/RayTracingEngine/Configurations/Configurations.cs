@@ -9,6 +9,6 @@
         /// <summary>
         /// necessary, since a ray reflected from a surface without displacement intersects the same surface
         /// </summary>
-        public const float MIN_RAY_STEP = 0;
+        public const float MIN_RAY_STEP = 0.02f;
     }
 }

@@ -45,6 +45,7 @@
     <Compile Include="HierarchyManager.cs" />
     <Compile Include="IHierarchyManager.cs" />
     <Compile Include="IHierarchyMember.cs" />
+    <Compile Include="IReadOnlyHierarchyManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
