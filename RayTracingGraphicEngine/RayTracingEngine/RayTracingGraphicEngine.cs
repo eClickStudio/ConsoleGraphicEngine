@@ -42,6 +42,9 @@ namespace RayTracingGraphicEngine3D
 
         public override void RenderFrame()
         {
+            //TEST: delete this
+            int n = 0;
+
             for (int x = 0; x < camera.Resolution.X; x++)
             {
                 for (int y = 0; y < camera.Resolution.Y; y++)
@@ -60,18 +63,21 @@ namespace RayTracingGraphicEngine3D
                     }
                     catch (StackOverflowException)
                     {
+                        //DEBUG: why didn't catch
                         Console.WriteLine("---------StackOverflow------------------------");
                         lightRay.Hierarchy.PrintHierarchy();
                     }
 
                     char pixelChar = camera.GetChar(pixelColor);
 
-                    //if (lightRay.Hierarchy.AllChildrenCount > 1 && pixelChar == ' ')
-                    //{
-                    //    Console.WriteLine("---------Iteration------------------------");
-                    //    Console.WriteLine($"Result intensity = {pixelColor}");
-                    //    lightRay.Hierarchy.PrintHierarchy();
-                    //}
+                    //DEBUG:
+                    if (lightRay.Hierarchy.AllChildrenCount > 1 && pixelChar == ' ')
+                    {
+                        Console.WriteLine($"---------Iteration-{n}-----------------------");
+                        Console.WriteLine($"Result intensity = {pixelColor}");
+                        lightRay.Hierarchy.PrintHierarchy();
+                        n++;
+                    }
 
                     screen[x + y * camera.Resolution.X] = pixelChar;
                 }
@@ -86,20 +92,21 @@ namespace RayTracingGraphicEngine3D
         {
             FullIntersection? intersection = GetNearestIntersection(ray.Ray);
 
+            if (ray.Intensity < MinRayIntensity 
+                || (!intersection.HasValue && ray.InteractionCount > 0))
+            {
+                return ray.Intensity + GetDirectionLightIntensity(ray.Ray.Direction);
+            }
+
             if (intersection.HasValue)
             {
                 ray.Interact();
 
-                LightRay reflectedRay = null;
-                LightRay refractedRay = null;
-
                 float absorptionCoefficient = GetAbsorptionCoefficient(ray.EnvironmentMaterial, intersection.Value.ShapeIntersection.MinIntersectionDistance);
                 ray.Intensity /= absorptionCoefficient;
 
-                if (ray.Intensity < MinRayIntensity)
-                {
-                    return 0;
-                }
+                LightRay reflectedRay = null;
+                LightRay refractedRay = null;
 
                 if (intersection.Value.Intersectable is ILight light)
                 {
@@ -129,20 +136,6 @@ namespace RayTracingGraphicEngine3D
                     return intensity;
                 }
             }
-            else if (ray.InteractionCount > 0)
-            {
-                IDirectionLight globalLight = LocalScene.GlobalLight;
-                float directionLightIntensity = Vector3.Dot(-ray.Ray.Direction, globalLight.WorldDirection) * globalLight.Intensity;
-
-                if (directionLightIntensity >= 0)
-                {
-                    return ray.Intensity + directionLightIntensity;
-                }
-                else
-                {
-                    return ray.Intensity;
-                }
-            }
 
             return 0;
         }
@@ -150,6 +143,12 @@ namespace RayTracingGraphicEngine3D
         private float GetAbsorptionCoefficient(Material environmentMaterial, float distance)
         {
             return (float)Math.Pow(Math.E, environmentMaterial.AbsorptionRate * distance);
+        }
+
+        private float GetDirectionLightIntensity(Vector3 rayDirection)
+        {
+            float directionLightIntensity = Vector3.Dot(-rayDirection, LocalScene.GlobalLight.WorldDirection) * LocalScene.GlobalLight.Intensity;
+            return MathExtension.Clamp(directionLightIntensity, 0, float.MaxValue);
         }
 
         private FullIntersection? GetNearestIntersection(Ray ray)

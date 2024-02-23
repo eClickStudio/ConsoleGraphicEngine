@@ -164,9 +164,8 @@ namespace ConsoleRayTracingRenderer
 
             //camera--------------------------------------------------------------------------------
             IObject3D camera = scene.MainCamera.ParentObject;
-            camera.Transform.Position = new Vector3(0, 5, 5);
+            camera.Transform.Position = new Vector3(5, 5, 5);
             camera.Transform.DirectAxisByPosition(Vector3.UnitZ, new Vector3(0, 0, 0));
-            //camera.AddComponent(new TransformMover(new Vector3(0, 10, 5), new Vector3(0, 50, 5), 5));
 
             Console.WriteLine($"CameraAxisX = {camera.Transform.AxisX}");
             Console.WriteLine($"CameraAxisY = {camera.Transform.AxisY}");
@@ -175,13 +174,15 @@ namespace ConsoleRayTracingRenderer
             //objects-------------------------------------------------------------------------------
             IObject3D box = SampleObjectsFactory.GetBox("Box", Material.Solid, new Vector3(2, 2, 2));
             box.Transform.Position = new Vector3(0, 0, 0);
+            camera.AddComponent(new TransformRotator(true, box.Transform, new Vector3(0, 1, 1), -30));
 
-            IObject3D sphere = SampleObjectsFactory.GetSphere("Sphere", Material.Glass, 1);
-            sphere.Transform.Position = new Vector3(0, 0, 0);
+            IObject3D sphere = SampleObjectsFactory.GetSphere("Sphere", Material.Solid, 1);
+            sphere.Transform.Position = new Vector3(3, 0, 0);
 
             //scene---------------------------------------------------------------------------------
             scene.AddObjects(
-                sphere
+                sphere,
+                box
                 );
 
             return scene;
