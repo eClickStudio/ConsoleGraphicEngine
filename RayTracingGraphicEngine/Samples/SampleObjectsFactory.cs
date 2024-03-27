@@ -8,7 +8,6 @@ using RayTracingGraphicEngine3D.RayTracingEngine.Components.Rendering;
 using RayTracingGraphicEngine3D.RayTracingEngine.Components.Rendering.Abstract;
 using RayTracingGraphicEngine3D.RayTracingEngine.Rays;
 using RayTracingGraphicEngine3D.RayTracingEngine.Rays.IntersectableShapes;
-using RayTracingGraphicEngine3D.RayTracingEngine.Components.Camera;
 using RayTracingGraphicEngine3D.RayTracingEngine.Tools;
 using System.Numerics;
 using System.Runtime.InteropServices;
@@ -37,15 +36,21 @@ namespace RayTracingGraphicEngine3D.Samples
             return CreateObject(name,
                 new OrthogonalCamera(resolution, charSize, cameraSize, charSet));
         }
+        #endregion
+
+        #region Light
+        public static IObject3D GetGlobalLight(string name, float intensity)
+        {
+            return CreateObject(name,
+                new Light(intensity));
+        }
 
         public static IObject3D GetDirectionLight(string name, Vector3 direction, float intensity)
         {
             return CreateObject(name,
                 new DirectionLight(direction, intensity));
         }
-        #endregion
 
-        #region Light
         private static IObject3D GetShapeLightObject(in ITransform transform, in IIntersectableShape shape, string name, float intensity)
         {
             Object3D object3D = new Object3D(transform, name);

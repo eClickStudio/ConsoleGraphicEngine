@@ -1,7 +1,6 @@
 ﻿using RayTracingGraphicEngine3D.Abstract.Scenes;
 using RayTracingGraphicEngine3D.RayTracingEngine.Components.Camera.Abstract;
 using RayTracingGraphicEngine3D.RayTracingEngine.Components.Light.Abstract;
-using RayTracingGraphicEngine3D.RayTracingEngine.Scenes;
 using System;
 using System.Threading.Tasks;
 
@@ -28,13 +27,13 @@ namespace RayTracingGraphicEngine3D.Abstract
                     camera = value.MainCamera;
                     light = value.GlobalLight;
 
-                    screen = new char[camera.Resolution.X * camera.Resolution.Y];
+                    screen = new char[camera.Resolution.Y * (camera.Resolution.X + 1)];
                 }
             }
         }
 
         protected CameraType camera;
-        protected IDirectionLight light;
+        protected ILight light;
 
         private Task _updatingTask;
 

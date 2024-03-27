@@ -1,9 +1,8 @@
-﻿using RayTracingGraphicEngine3D.RayTracingEngine.Components.Light.Abstract;
-using RayTracingGraphicEngine3D.RayTracingEngine.Rays;
+﻿using RayTracingGraphicEngine3D.RayTracingEngine.Rays;
 
 namespace RayTracingGraphicEngine3D.RayTracingEngine.Components.Light
 {
-    public class ShapedLight : AbstractLight, IIntersectable
+    public class ShapedLight : Light, IIntersectable
     {
         /// <summary>
         /// Shape of this line

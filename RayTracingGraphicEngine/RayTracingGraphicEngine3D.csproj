@@ -68,7 +68,7 @@
     <Compile Include="RayTracingEngine\Components\Camera\FishEyeCamera.cs" />
     <Compile Include="RayTracingEngine\Components\Camera\OrthogonalCamera.cs" />
     <Compile Include="RayTracingEngine\Components\Intersectable\IIntersectableComponent.cs" />
-    <Compile Include="RayTracingEngine\Components\Light\Abstract\AbstractLight.cs" />
+    <Compile Include="RayTracingEngine\Components\Light\Light.cs" />
     <Compile Include="RayTracingEngine\Components\Light\Abstract\IDirectionLight.cs" />
     <Compile Include="RayTracingEngine\Components\Light\Abstract\ILight.cs" />
     <Compile Include="RayTracingEngine\Components\Light\DirectionLight.cs" />

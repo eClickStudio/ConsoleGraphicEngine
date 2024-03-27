@@ -22,11 +22,23 @@ namespace RayTracingGraphicEngine3D.RayTracingEngine.Components.Rendering
             shape.OnChangedEvent += () => OnChanged();
         }        
 
+        private float GetReflectionCoefficient(float n1, float n2)
+        {
+            float reflectionCoefficient = (float)Math.Pow((n1 - n2) / (n1 + n2), 2);
+
+            if (!MathExtension.IsNormal(reflectionCoefficient))
+            {
+                throw new ArithmeticException($"Reflection coefficient is incorrect; reflectionCoefficient = {reflectionCoefficient}; It should be normal");
+            }
+
+            return reflectionCoefficient;
+        }
+
         public LightRay GetReflectedRay(LightRay lightRay, Ray normalRay)
         {
             float n1 = lightRay.EnvironmentMaterial.ReflectiveIndex;
             float n2 = Material.ReflectiveIndex;
-            float reflectionCoefficient = (float)Math.Pow((n1 - n2) / (n1 + n2), 2);
+            float reflectionCoefficient = GetReflectionCoefficient(n1, n2);
             float reflectedRayIntensity = reflectionCoefficient * lightRay.Intensity;
 
             Vector3 incidenceDirection = -lightRay.Ray.Direction;
@@ -53,18 +65,42 @@ namespace RayTracingGraphicEngine3D.RayTracingEngine.Components.Rendering
             return new LightRay(new Ray(normalRay.Origin, reflectedDirection), reflectedRayIntensity, lightRay.EnvironmentMaterial, lightRay.InteractionCount, "reflected", lightRay.Hierarchy.Parent, ParentObject.Name);
         }
 
+        private float GetRefractionCoefficient(float n1, float n2)
+        {
+            float refractionCoefficient = 1 - GetReflectionCoefficient(n1, n2);
+
+            if (!MathExtension.IsNormal(refractionCoefficient))
+            {
+                throw new ArithmeticException($"Refraction coefficient is incorrect; refractionCoefficient = {refractionCoefficient}; It should be normal");
+            }
+
+            return refractionCoefficient;
+        }
+
+        private float GetRefractedAngle(float n1, float n2, float incidenceAngle)
+        {
+            float refractedAngle = (float)Math.Asin(MathExtension.Clamp((float)((n1 / n2) * Math.Sin(incidenceAngle)), -1, 1));
+
+            if (!MathExtension.IsNormal(refractedAngle))
+            {
+                throw new ArithmeticException($"Refracted angle is incorrect; refractedAngle = {refractedAngle}; It should be normal");
+            }
+
+            return refractedAngle;
+        }
+
         public LightRay GetRefractedRay(LightRay lightRay, Ray normalRay)
         {
             float n1 = lightRay.EnvironmentMaterial.ReflectiveIndex;
             float n2 = Material.ReflectiveIndex;
-            float refractionCoefficient = (float)((4 * n1 * n2) / Math.Pow(n1 + n2, 2));
+            float refractionCoefficient = GetRefractionCoefficient(n1, n2);
             float refractedRayIntensity = refractionCoefficient * lightRay.Intensity;
 
             Vector3 incidenceDirection = -lightRay.Ray.Direction;
             Vector3 normalDirection = normalRay.Direction;
 
             float incidenceAngle = VectorExtension.GetAngleBetweenVectors(incidenceDirection, normalDirection);
-            float refractedAngle = (float)Math.Asin(MathExtension.Clamp((float)((n1 / n2) * Math.Sin(incidenceAngle)), -1, 1));
+            float refractedAngle = GetRefractedAngle(n1, n2, incidenceAngle);
             float rotationAngle = (float)(incidenceAngle + Math.PI - refractedAngle);
 
             Vector3 rotationAxis = VectorExtension.GetRotationAxis(incidenceDirection, normalDirection, incidenceAngle);

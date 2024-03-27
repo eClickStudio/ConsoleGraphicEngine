@@ -17,8 +17,12 @@ namespace RayTracingGraphicEngine3D.Abstract.Scenes
         /// <summary>
         /// Main light for rendering
         /// </summary>
-        IDirectionLight GlobalLight { get; set; }
+        ILight GlobalLight { get; set; }
 
+        /// <summary>
+        /// Direction lights of this scene
+        /// </summary>
+        IList<IDirectionLight> DirectionLights { get; }
 
         /// <summary>
         /// All intersectables (objects ray can intersect)

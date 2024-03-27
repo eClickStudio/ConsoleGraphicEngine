@@ -22,7 +22,7 @@ namespace RayTracingGraphicEngine3D.RayTracingEngine.Components.Rendering
             {
                 if (!value.IsNormal())
                 {
-                    throw new ArgumentException("LightRay intensity can not be NaN");
+                    throw new ArgumentException("LightRay intensity shold be normal (not NaN or Infinity e.t.c)");
                 }
 
                 _intensity = MathExtension.Clamp(value, 0, float.MaxValue);

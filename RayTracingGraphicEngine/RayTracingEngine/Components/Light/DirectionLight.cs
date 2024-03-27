@@ -1,5 +1,4 @@
-﻿using Engine3D.Components.Transform;
-using Engine3D.Objects;
+﻿using Engine3D.Objects;
 using MathExtensions;
 using RayTracingGraphicEngine3D.RayTracingEngine.Components.Light.Abstract;
 using System;
@@ -7,7 +6,7 @@ using System.Numerics;
 
 namespace RayTracingGraphicEngine3D.RayTracingEngine.Components.Light
 {
-    public class DirectionLight : AbstractLight, IDirectionLight
+    public class DirectionLight : Light, IDirectionLight
     {
         //TODO: light direction must be depended on transform rotation
 

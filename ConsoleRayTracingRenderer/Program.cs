@@ -43,6 +43,7 @@ namespace ConsoleRayTracingRenderer
             commandManager.HandleCommand("help");
 
             commandManager.HandleCommand("frame");
+            commandManager.HandleCommand("start");
 
             string command;
             while (isWorking)
@@ -77,11 +78,9 @@ namespace ConsoleRayTracingRenderer
         {
             RayTracingScene scene = new RayTracingScene(Material.Vacuum);
 
-            IObject3D globalLight = SampleObjectsFactory.GetDirectionLight("DirectionLight", new Vector3(0, 0, 1), 1);
-
+            IObject3D globalLight = SampleObjectsFactory.GetGlobalLight("GlobalLight", 0.1f);
             scene.AddObject(globalLight);
-
-            scene.GlobalLight = globalLight.GetComponent<DirectionLight>();
+            scene.GlobalLight = globalLight.GetComponent<Light>();
 
             //camera--------------------------------------------------------------------------------
             Vector2Int resolution = new Vector2Int(Console.WindowWidth, Console.WindowHeight);
@@ -154,13 +153,13 @@ namespace ConsoleRayTracingRenderer
         {
             RayTracingScene scene = GetScene();
 
-            //light---------------------------------------------------------------------------------
-            IDirectionLight globalLight = scene.GlobalLight;
-            globalLight.LocalDirection = new Vector3(0, 1, -1);
-            globalLight.Intensity = 1;
-            globalLight.ParentObject.AddComponent(new TransformRotator(new Vector3(1, 1, 1), 30));
+            //Screen-DEBUG--------------------------------------------------------------------------
+            Console.WriteLine("Screen");
+            Console.WriteLine($"Resolution = {scene.MainCamera.Resolution}");
 
-            Console.WriteLine($"GlobalLightWorldDirection = {globalLight.WorldDirection}");
+            //light---------------------------------------------------------------------------------
+            IObject3D directionLight = SampleObjectsFactory.GetDirectionLight("DirectionLight", new Vector3(1, 1, 1), 1f);
+            directionLight.AddComponent(new TransformRotator(new Vector3(-1, -1, 1), -30));
 
             //camera--------------------------------------------------------------------------------
             IObject3D camera = scene.MainCamera.ParentObject;
@@ -174,96 +173,23 @@ namespace ConsoleRayTracingRenderer
             //objects-------------------------------------------------------------------------------
             IObject3D box = SampleObjectsFactory.GetBox("Box", Material.Solid, new Vector3(2, 2, 2));
             box.Transform.Position = new Vector3(0, 0, 0);
-            camera.AddComponent(new TransformRotator(true, box.Transform, new Vector3(0, 1, 1), -30));
+            //camera.AddComponent(new TransformRotator(true, box.Transform, new Vector3(1, 1, 1), -30));
 
             IObject3D sphere = SampleObjectsFactory.GetSphere("Sphere", Material.Solid, 1);
             sphere.Transform.Position = new Vector3(3, 0, 0);
 
+            IObject3D sphereLight = SampleObjectsFactory.GetSphereLight("SphereLight", 0.7f, 1);
+            sphereLight.Transform.Position = new Vector3(3, 0, 0);
+
+            IObject3D plane = SampleObjectsFactory.GetPlane("Plane", Material.PerfectMirror, new Vector3(0, 0, 1), 0);
+
             //scene---------------------------------------------------------------------------------
             scene.AddObjects(
-                sphere,
+                directionLight,
                 box
                 );
 
             return scene;
         }
-
-        //private static RayTracingScene InitializeScene()
-        //{
-        //    //TODO: set charSize automaticly
-
-        //    //RayTracingScene scene = GetScene();
-
-        //    //IObject3D camera = scene.MainCamera.ParentObject;
-        //    //camera.Transform.Position = new Vector3(0, 10, 0);
-        //    //camera.Transform.RotateAroundAxis(new Vector3(0, 1, 0), (float)Math.PI / 4);
-        //    //camera.Transform.RotateAroundAxis(new Vector3(-1, 0, 1), -(float)Math.PI / 4);
-
-        //    //IObject3D cube = SampleObjectsFactory.GetCube("Cube", Material.Solid, 1);
-
-        //    //float distanceFromCamera = 10;
-        //    //Vector3 cameraForwardPosition =
-        //    //    camera.Transform.Position + camera.Transform.AxisZ * distanceFromCamera;
-
-        //    //cube.Transform.Position = cameraForwardPosition;
-
-        //    //IObject3D sphere1 = SampleObjectsFactory.GetSphere("Sphere1", Material.Diamond, 0.5f);
-        //    //sphere1.Transform.Position = cameraForwardPosition + new Vector3(1, 0, -1);
-
-        //    //IObject3D sphereLight = SampleObjectsFactory.GetSphereLight("SphereLight", 1, 0.7f);
-        //    //sphereLight.Transform.Position = cameraForwardPosition + new Vector3(-1, 0, 1);
-
-        //    ////IObject3D someObject = new Object3D("SomeObject");
-        //    ////sphere2.ThisTransform.Hierarchy.AddChild(someObject.ThisTransform);
-
-        //    //camera.AddComponent(new TransformRotator(true, cube.Transform, new Vector3(0, 1, 0), 10));
-
-        //    //scene.AddObjects(
-        //    //        cube,
-        //    //        sphere1,
-        //    //        sphereLight
-        //    //    );
-
-        //    RayTracingScene scene = GetScene();
-
-        //    IObject3D camera = scene.MainCamera.ParentObject;
-        //    camera.Transform.Position = new Vector3(0, 0, 0);
-
-        //    //camera.Transform.RotateAroundAxis(new Vector3(0, 1, 0), (float)Math.PI / 4);
-        //    //camera.Transform.RotateAroundAxis(new Vector3(-1, 0, 1), -(float)Math.PI / 4);
-
-        //    //float shphereDistanceFromCamera = 10;
-        //    IObject3D sphere = SampleObjectsFactory.GetSphere("Sphere", Material.Solid, 1f);
-        //    //sphere.Transform.Position = camera.Transform.Position + camera.Transform.AxisZ * shphereDistanceFromCamera;
-        //    sphere.Transform.Position = new Vector3(0, 0, 5);
-
-        //    IObject3D cube = SampleObjectsFactory.GetCube("Cube", Material.Diamond, 1f);
-        //    cube.Transform.Position = new Vector3(0, 0, 5);
-        //    camera.AddComponent(new TransformRotator(true, sphere.Transform, new Vector3(1, 1, 1), 30));
-
-        //    float shphereLightDistanceFromCamera = 15;
-        //    IObject3D sphereLight = SampleObjectsFactory.GetSphereLight("SphereLight", 1, 2);
-        //    //sphereLight.Transform.Position = camera.Transform.Position + camera.Transform.AxisZ * shphereLightDistanceFromCamera;
-        //    //sphereLight.Transform.Position = new Vector3(sphereLight.Transform.Position.X - 1, sphereLight.Transform.Position.Y, sphereLight.Transform.Position.Z);
-        //    sphereLight.Transform.Position = new Vector3(0, 0, 9);
-        //    //sphereLight.AddComponent(new TransformMover(new Vector3(0, 2, 5), new Vector3(0, -2, 5), 0.5f));
-
-        //    //IObject3D plane = SampleObjectsFactory.GetPlaneLight("Plane", 1, new Vector3(0, 1, 0), 0);
-
-        //    //IObject3D someObject = new Object3D("SomeObject");
-        //    //sphere2.ThisTransform.Hierarchy.AddChild(someObject.ThisTransform);
-
-        //    //camera.AddComponent(new TransformRotator(true, sphere.Transform, new Vector3(0, 1, 0), 10));
-        //    //plane.AddComponent(new TransformRotator(false, plane.Transform, new Vector3(0.5f, 0.5f, 0.5f), 10));
-
-        //    scene.AddObjects(
-        //            sphere
-        //            //cube,
-        //            //plane,
-        //            //sphereLight
-        //        );
-
-        //    return scene;
-        //}
     }
 }

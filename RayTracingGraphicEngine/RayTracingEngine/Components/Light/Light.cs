@@ -1,10 +1,11 @@
 ﻿using Engine3D.Components.Abstract;
 using MathExtensions;
+using RayTracingGraphicEngine3D.RayTracingEngine.Components.Light.Abstract;
 using System;
 
-namespace RayTracingGraphicEngine3D.RayTracingEngine.Components.Light.Abstract
+namespace RayTracingGraphicEngine3D.RayTracingEngine.Components.Light
 {
-    public class AbstractLight : AbstractComponent, ILight
+    public class Light : AbstractComponent, ILight
     {
         private float _intensity;
         public float Intensity
@@ -30,7 +31,7 @@ namespace RayTracingGraphicEngine3D.RayTracingEngine.Components.Light.Abstract
             }
         }
 
-        public AbstractLight(float intensity)
+        public Light(float intensity)
         {
             Intensity = intensity;
         }

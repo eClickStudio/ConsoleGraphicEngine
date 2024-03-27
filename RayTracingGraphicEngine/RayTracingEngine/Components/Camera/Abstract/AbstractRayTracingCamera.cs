@@ -96,7 +96,8 @@ namespace RayTracingGraphicEngine3D.RayTracingEngine.Components.Camera.Abstract
             if (intensity.HasValue)
             {
                 intensity = MathExtension.Clamp(intensity.Value, 0, 1);
-                int colorIndex = MathExtension.Clamp((int)(intensity * CharSet.CharsCount), 0, CharSet.CharsCount - 1); ;
+                int roundedIndex = (int)Math.Round(intensity.Value * CharSet.CharsCount, MidpointRounding.AwayFromZero);
+                int colorIndex = MathExtension.Clamp(roundedIndex, 0, CharSet.CharsCount - 1);
 
                 return CharSet.CharsGradient[colorIndex];
             }
@@ -109,8 +110,8 @@ namespace RayTracingGraphicEngine3D.RayTracingEngine.Components.Camera.Abstract
 
         private Vector2 GetRelativePosition(Vector2Int screenPosition)
         {
-            float x = (float)screenPosition.X / Resolution.X * 2 - 1;
-            float y = 1 - (float)screenPosition.Y / Resolution.Y * 2;
+            float x = 1 - (float)screenPosition.X / (Resolution.X - 1) * 2;
+            float y = 1 - (float)screenPosition.Y / (Resolution.Y - 1) * 2;
 
             y *= ResolutionAspect * CharAspect;
 

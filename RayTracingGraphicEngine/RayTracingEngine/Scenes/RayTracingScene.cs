@@ -8,6 +8,8 @@ using RayTracingGraphicEngine3D.Abstract.Scenes;
 using System;
 using Engine3D.Components.Abstract;
 using RayTracingGraphicEngine3D.RayTracingEngine.Components.Rendering;
+using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace RayTracingGraphicEngine3D.RayTracingEngine.Scenes
 {
@@ -54,8 +56,8 @@ namespace RayTracingGraphicEngine3D.RayTracingEngine.Scenes
             }
         }
 
-        private IDirectionLight _globalLight;
-        public IDirectionLight GlobalLight
+        private ILight _globalLight;
+        public ILight GlobalLight
         {
             get => _globalLight;
             set
@@ -69,38 +71,54 @@ namespace RayTracingGraphicEngine3D.RayTracingEngine.Scenes
             }
         }
 
-
+        private readonly Predicate<IComponent> _intersectableMatchPredicate = (component) => component is IIntersectable;
         protected readonly List<IIntersectable> _intersectables;
         public IReadOnlyList<IIntersectable> Intersectables => _intersectables;
+
+
+        private readonly Predicate<IComponent> _directionLightMatchPredicate = (component) => component is IDirectionLight;
+        protected readonly List<IDirectionLight> _directionLights; 
+        public IList<IDirectionLight> DirectionLights => _directionLights;
 
         public RayTracingScene(Material environmentMaterial)
         {
             EnvironmentMaterial = environmentMaterial;
             _intersectables = new List<IIntersectable>();
+            _directionLights = new List<IDirectionLight>();
         }
 
-        private IReadOnlyList<IComponent> FindIntersectableComponents(in IObject3D object3D)
+        private void RegisterObjectComponents<T>(List<T> registrationList, in IObject3D object3D, Predicate<IComponent> matchPredicate)
         {
-            Predicate<IComponent> match = (component) => component is IIntersectable;
-            return object3D.FindAllComponents(match);
+            IReadOnlyList<IComponent> foundComponents = object3D.FindAllComponents(matchPredicate);
+
+            if (foundComponents.Count > 0)
+            {
+                foreach (T component in foundComponents.Select(i => (T)i))
+                {
+                    registrationList.Add(component);
+                }
+            }
+        }
+
+        private void UnregisterObjectComponents<T>(List<T> registrationList, in IObject3D object3D, Predicate<IComponent> matchPredicate)
+        {
+            IReadOnlyList<IComponent> foundComponents = object3D.FindAllComponents(matchPredicate);
+
+            if (foundComponents.Count > 0)
+            {
+                foreach (T component in foundComponents.Select(i => (T)i))
+                {
+                    registrationList.Remove(component);
+                }
+            }
         }
 
         public override void AddObject(in IObject3D object3D)
         {
             if (object3D != null && !ContainObject(object3D))
             {
-                IReadOnlyList<IComponent> intersectableComponents = FindIntersectableComponents(object3D);
-
-                if (intersectableComponents.Count > 0)
-                {
-                    foreach (IComponent component in intersectableComponents)
-                    {
-                        if (component is IIntersectable intersectable)
-                        {
-                            _intersectables.Add(intersectable);
-                        }
-                    }
-                }
+                RegisterObjectComponents(_intersectables, object3D, _intersectableMatchPredicate);
+                RegisterObjectComponents(_directionLights, object3D, _directionLightMatchPredicate);
             }
 
             base.AddObject(object3D);
@@ -110,18 +128,8 @@ namespace RayTracingGraphicEngine3D.RayTracingEngine.Scenes
         {
             if (object3D != null && ContainObject(object3D))
             {
-                IReadOnlyList<IComponent> intersectableComponents = FindIntersectableComponents(object3D);
-
-                if (intersectableComponents.Count > 0)
-                {
-                    foreach (IComponent component in intersectableComponents)
-                    {
-                        if (component is IIntersectable intersectable)
-                        {
-                            _intersectables.Remove(intersectable);
-                        }
-                    }
-                }
+                UnregisterObjectComponents(_intersectables, object3D, _intersectableMatchPredicate);
+                UnregisterObjectComponents(_directionLights, object3D, _directionLightMatchPredicate);
             }
 
             base.RemoveObject(object3D);
