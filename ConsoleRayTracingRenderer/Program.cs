@@ -12,46 +12,57 @@ using RayTracingGraphicEngine3D.Samples;
 
 //Scripts
 using ConsoleRayTracingRenderer.Scripts;
-using RayTracingGraphicEngine3D.RayTracingEngine.Components.Light.Abstract;
 
 namespace ConsoleRayTracingRenderer
 {
     internal class Program
     {
+        private static RayTracingGraphicEngine _engine;
+        private static CommandHandler _commandManager;
+        private static Dictionary<string, RayTracingScene> _scenes;
+
         static async Task Main()
         {
             bool isWorking = true;
 
             ConsoleManager.MaximizeConsole();
 
-            RayTracingGraphicEngine engine = new RayTracingGraphicEngine(0.1f);
-            engine.LocalScene = GetLightTestScene();
+            _scenes = new Dictionary<string, RayTracingScene>()
+            {
+                { "SphereScene", GetSphereScene() },
+                { "CubeScene", GetCubeScene() },
+                { "SatelliteScene", GetSatelliteScene()},
+                { "TwoCubesScene", GetTwoCubesScene()}
+            };
 
-            CommandHandler commandManager = new CommandHandler(ConsoleColorSet.BlackGreen);
-            commandManager.AddCommand("start", new Command("Strats engine updating", engine.StartUpdating));
-            commandManager.AddCommand("stop", new Command("Stops engine updating", async () => await engine.StopUpdating()));
-            commandManager.AddCommand("update", new Command("Stops engine updating and updates only one frame", async () => { await engine.StopUpdating(); engine.UpdateFrame(); }));
-            commandManager.AddCommand("frame", new Command("Stops engine updating and renders only one frame", async () => { await engine.StopUpdating(); engine.RenderFrame(); }));
-            commandManager.AddCommand("hierarchy", new Command("Prints local scene hierarchy to the console", engine.LocalScene.SceneTransform.Hierarchy.PrintHierarchy));
-            commandManager.AddCommand("maximize", new Command("Maximazes console", () => { ConsoleManager.MaximizeConsole(); commandManager.HandleCommand("frame"); }));
-            commandManager.AddCommand("clear", new Command("Clears the console", () => { Console.Clear(); }));
-            commandManager.AddCommand("exit", new Command("Exits from this program", () => { isWorking = false; }));
+            _engine = new RayTracingGraphicEngine(3, 0.1f);
+            _engine.LocalScene = GetCubeScene();
+
+            _commandManager = new CommandHandler(ConsoleColorSet.BlackGreen);
+            _commandManager.AddCommand("load", new Command("LoadingScene", LoadCommand));
+            _commandManager.AddCommand("start", new Command("Strats engine updating", _engine.StartUpdating));
+            _commandManager.AddCommand("stop", new Command("Stops engine updating", async () => await _engine.StopUpdating()));
+            _commandManager.AddCommand("update", new Command("Stops engine updating and updates only one frame", async () => { await _engine.StopUpdating(); _engine.UpdateFrame(); }));
+            _commandManager.AddCommand("frame", new Command("Stops engine updating and renders only one frame", async () => { await _engine.StopUpdating(); _engine.RenderFrame(); }));
+            _commandManager.AddCommand("hierarchy", new Command("Prints local scene hierarchy to the console", _engine.LocalScene.SceneTransform.Hierarchy.PrintHierarchy));
+            _commandManager.AddCommand("maximize", new Command("Maximazes console", () => { ConsoleManager.MaximizeConsole(); _commandManager.HandleCommand("frame"); }));
+            _commandManager.AddCommand("clear", new Command("Clears the console", () => { Console.Clear(); }));
+            _commandManager.AddCommand("exit", new Command("Exits from this program", () => { isWorking = false; }));
 
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine("Its raytracingEngine command manager;\n" + 
                               "Type [command] to handle it;");
-            commandManager.HandleCommand("help");
+            _commandManager.HandleCommand("help");
 
-            commandManager.HandleCommand("frame");
-            commandManager.HandleCommand("start");
+            _commandManager.HandleCommand("frame");
 
             string command;
             while (isWorking)
             {
-                if (engine.IsUpdating)
+                if (_engine.IsUpdating)
                 {
                     Console.ReadKey(true);
-                    await engine.StopUpdating();
+                    await _engine.StopUpdating();
                 }
 
                 Console.Write(">>> ");
@@ -61,15 +72,50 @@ namespace ConsoleRayTracingRenderer
                                  .Replace(" ", "");
 
                 Console.ForegroundColor = ConsoleColor.White;
-                if (commandManager.ContainCommand(command))
+                if (_commandManager.ContainCommand(command))
                 {
-                    commandManager.HandleCommand(command);
+                    _commandManager.HandleCommand(command);
                 }
                 else
                 {
                     Console.WriteLine("Command you want to handle does not exist;\n" +
                                      $"Command you typed {command};\n" +
                                       "Type 'help' to get all addmissible commands;");
+                }
+            }
+        }
+
+        private static void LoadCommand()
+        {
+            Console.WriteLine("Type 'exit' to exit");
+            Console.WriteLine("Type scene you want to load:");
+            foreach(string key in _scenes.Keys)
+            {
+                Console.WriteLine($" * {key}");
+            }
+
+            while (true)
+            {
+                Console.Write(">>> ");
+                string name = Console.ReadLine();
+
+                if (name.ToLower() == "exit")
+                {
+                    Console.WriteLine("Exiting...");
+                    break;
+                }
+
+                if (name != null && _scenes.ContainsKey(name))
+                {
+                    Console.WriteLine("LoadingScene...");
+                    _engine.LocalScene = _scenes[name];
+                    Console.WriteLine();
+                    _commandManager.HandleCommand("frame");
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("Scene name is invalid. Please type name from list above");
                 }
             }
         }
@@ -117,76 +163,99 @@ namespace ConsoleRayTracingRenderer
             return scene;
         }
 
-        private static RayTracingScene GetSolarSystemScene()
+        private static RayTracingScene GetSphereScene()
         {
             RayTracingScene scene = GetScene();
 
-            //camera--------------------------------------------------------------------------------
+            IObject3D directionLight = SampleObjectsFactory.GetDirectionLight("DirectionLight", new Vector3(1, 1, 1), 1f);
+            directionLight.AddComponent(new TransformRotator(new Vector3(0, 0, 1), 15));
+
             IObject3D camera = scene.MainCamera.ParentObject;
-            camera.Transform.Position = new Vector3(0, 0, 50);
-            camera.Transform.DirectAxisByPosition(Vector3.UnitZ, new Vector3(0, 0, 0));
+            camera.Transform.Position = new Vector3(5, 5, 5);
+            camera.Transform.DirectAxisByPosition(Vector3.UnitZ, Vector3.Zero);
 
-            //objects-------------------------------------------------------------------------------
-            IObject3D sun = SampleObjectsFactory.GetSphereLight("Solar", 0.95f, 1.5f);
+            IObject3D sphere = SampleObjectsFactory.GetSphere("Sphere", Material.PerfectMirror, 2);
+            sphere.Transform.Position = new Vector3(0, 0, 0);
 
-            //IObject3D planet = SampleObjectsFactory.GetSphere("Planet", Material.Solid, 1);
-            IObject3D planet = SampleObjectsFactory.GetSphereLight("Planet", 0.7f, 1);
-            planet.Transform.Position = new Vector3(5, 0, 0);
-            planet.AddComponent(new TransformRotator(true, sun.Transform, Vector3.UnitZ, 30));
-
-            //IObject3D satellite = SampleObjectsFactory.GetSphere("Satellite", Material.Solid, 0.5f);
-            IObject3D satellite = SampleObjectsFactory.GetSphereLight("Satellite", 0.5f, 0.5f);
-            satellite.Transform.Position = new Vector3(3, 0, 0);
-            satellite.AddComponent(new TransformRotator(true, planet.Transform, Vector3.UnitZ, 30));
-
-            //scene---------------------------------------------------------------------------------
             scene.AddObjects(
-                sun,
-                planet,
-                satellite
+                directionLight, 
+                sphere
                 );
 
             return scene;
         }
 
-        private static RayTracingScene GetLightTestScene()
+        private static RayTracingScene GetSatelliteScene()
         {
             RayTracingScene scene = GetScene();
 
-            //Screen-DEBUG--------------------------------------------------------------------------
-            Console.WriteLine("Screen");
-            Console.WriteLine($"Resolution = {scene.MainCamera.Resolution}");
-
-            //light---------------------------------------------------------------------------------
             IObject3D directionLight = SampleObjectsFactory.GetDirectionLight("DirectionLight", new Vector3(1, 1, 1), 1f);
-            directionLight.AddComponent(new TransformRotator(new Vector3(-1, -1, 1), -30));
 
-            //camera--------------------------------------------------------------------------------
             IObject3D camera = scene.MainCamera.ParentObject;
-            camera.Transform.Position = new Vector3(5, 5, 5);
-            camera.Transform.DirectAxisByPosition(Vector3.UnitZ, new Vector3(0, 0, 0));
+            camera.Transform.Position = new Vector3(0.1f, -5, 0);
+            camera.Transform.DirectAxisByPosition(Vector3.UnitZ, Vector3.Zero);
 
-            Console.WriteLine($"CameraAxisX = {camera.Transform.AxisX}");
-            Console.WriteLine($"CameraAxisY = {camera.Transform.AxisY}");
-            Console.WriteLine($"CameraAxisZ = {camera.Transform.AxisZ}");
+            IObject3D sphere = SampleObjectsFactory.GetSphere("Sphere", Material.PerfectMirror, 2);
+            sphere.Transform.Position = new Vector3(0, 0, 0);
+            camera.AddComponent(new TransformRotator(true, sphere.Transform, new Vector3(0, 0, 1), 15));
 
-            //objects-------------------------------------------------------------------------------
-            IObject3D box = SampleObjectsFactory.GetBox("Box", Material.Solid, new Vector3(2, 2, 2));
-            box.Transform.Position = new Vector3(0, 0, 0);
-            //camera.AddComponent(new TransformRotator(true, box.Transform, new Vector3(1, 1, 1), -30));
+            IObject3D sphere1 = SampleObjectsFactory.GetSphere("Sphere1", Material.PerfectMirror, 0.7f);
+            sphere1.Transform.Position = new Vector3(0, -3, 0);
 
-            IObject3D sphere = SampleObjectsFactory.GetSphere("Sphere", Material.Solid, 1);
-            sphere.Transform.Position = new Vector3(3, 0, 0);
-
-            IObject3D sphereLight = SampleObjectsFactory.GetSphereLight("SphereLight", 0.7f, 1);
-            sphereLight.Transform.Position = new Vector3(3, 0, 0);
-
-            IObject3D plane = SampleObjectsFactory.GetPlane("Plane", Material.PerfectMirror, new Vector3(0, 0, 1), 0);
-
-            //scene---------------------------------------------------------------------------------
             scene.AddObjects(
                 directionLight,
-                box
+                sphere,
+                sphere1
+                );
+
+            return scene;
+        }
+
+        private static RayTracingScene GetCubeScene()
+        {
+            RayTracingScene scene = GetScene();
+
+            IObject3D directionLight = SampleObjectsFactory.GetDirectionLight("DirectionLight", new Vector3(0, 0, -1), 1f);
+            IObject3D directionLight1 = SampleObjectsFactory.GetDirectionLight("DirectionLight1", new Vector3(0, -1, 0), 0.5f);
+
+            IObject3D camera = scene.MainCamera.ParentObject;
+            camera.Transform.Position = new Vector3(0.001f, -5, 5);
+            camera.Transform.DirectAxisByPosition(Vector3.UnitZ, Vector3.Zero);
+
+            IObject3D cube = SampleObjectsFactory.GetCube("Cube", Material.PerfectMirror, 2);
+            cube.Transform.Position = new Vector3(0, 0, 0);
+            camera.AddComponent(new TransformRotator(true, cube.Transform, new Vector3(0, 0, 1), 15));
+
+            scene.AddObjects(
+                directionLight,
+                directionLight1,
+                cube
+                );
+
+            return scene;
+        }
+
+        private static RayTracingScene GetTwoCubesScene()
+        {
+            RayTracingScene scene = GetScene();
+
+            IObject3D directionLight = SampleObjectsFactory.GetDirectionLight("DirectionLight", new Vector3(-1, 1, 0), 1f);
+            directionLight.AddComponent(new TransformRotator(new Vector3(1, 1, 1), 15));
+
+            IObject3D camera = scene.MainCamera.ParentObject;
+            camera.Transform.Position = new Vector3(-5, 6, 0);
+            camera.Transform.DirectAxisByPosition(Vector3.UnitZ, new Vector3(2, 0, 0));
+
+            IObject3D cube = SampleObjectsFactory.GetCube("Cube", Material.PerfectMirror, 2);
+            cube.Transform.Position = new Vector3(0, 0, 0);
+
+            IObject3D cube1 = SampleObjectsFactory.GetCube("Cube1", Material.PerfectMirror, 2);
+            cube1.Transform.Position = new Vector3(2, 6, 0);
+
+            scene.AddObjects(
+                directionLight,
+                cube,
+                cube1
                 );
 
             return scene;

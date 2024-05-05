@@ -10,7 +10,6 @@ using RayTracingGraphicEngine3D.RayTracingEngine.Scenes;
 using RayTracingGraphicEngine3D.RayTracingEngine.Tools;
 using System;
 using System.Numerics;
-using System.Security;
 using System.Collections.Generic;
 
 namespace RayTracingGraphicEngine3D
@@ -34,27 +33,30 @@ namespace RayTracingGraphicEngine3D
                 _minRayIntensity = MathExtension.Clamp(value, 0.01f, 1);
             }
         }
-
-        //TODO: dont forget base fps in constructor
         public RayTracingGraphicEngine(float minRayIntensity) : base()
         {
             MinRayIntensity = minRayIntensity;
         }
 
-        //DEBUG:
-        private int frameNum = 0;
-        private int requiredFrameNum = 1000;
+        public RayTracingGraphicEngine(uint fps, float minRayIntensity) : base(fps)
+        {
+            MinRayIntensity = minRayIntensity;
+        }
 
-        private Vector2Int requiredPixel1 = new Vector2Int(96, 30);
-        private Vector2Int requiredPixel2 = new Vector2Int(140, 30);
-        private Vector2Int centerPixel = new Vector2Int(118, 31);
+        ////DEBUG:
+        //private int frameNum = 0;
+        //private int requiredFrameNum = 1000;
+
+        //private Vector2Int requiredPixel1 = new Vector2Int(96, 30);
+        //private Vector2Int requiredPixel2 = new Vector2Int(140, 30);
+        //private Vector2Int centerPixel = new Vector2Int(118, 31);
 
         public override void RenderFrame()
         {
-            //DEBUG
-            frameNum++;
-            Dictionary<Vector2Int, RayDebugData> catchedRays = new Dictionary<Vector2Int, RayDebugData>();
-            Vector3 startRayDirection;
+            ////DEBUG
+            //frameNum++;
+            //Dictionary<Vector2Int, RayDebugData> catchedRays = new Dictionary<Vector2Int, RayDebugData>();
+            //Vector3 startRayDirection;
 
             for (int x = 0; x < camera.Resolution.X + 1; x++)
             {
@@ -72,58 +74,48 @@ namespace RayTracingGraphicEngine3D
 
 
                         LightRay lightRay = camera.GetRay(screenPosition);
-                        startRayDirection = lightRay.Ray.Direction;
+                        //startRayDirection = lightRay.Ray.Direction;
 
-                        //DEBUG
-                        if (frameNum == requiredFrameNum &&
-                            screenPosition == requiredPixel1)
-                        {
+                        ////DEBUG
+                        //if (frameNum == requiredFrameNum &&
+                        //    screenPosition == requiredPixel1)
+                        //{
 
-                        }
+                        //}
 
                         //TODO: check camera position and return right environment material; May be ray should return result if it intersect inside or outside renderer shape
 
                         float pixelColor = 0;
 
-                        try
-                        {
-                            pixelColor = RenderRay(lightRay);
-                        }
-                        catch (StackOverflowException)
-                        {
-                            //DEBUG: why didn't catch
-                            Console.WriteLine("---------StackOverflow------------------------");
-                            lightRay.Hierarchy.PrintHierarchy();
-                        }
-
+                        pixelColor = RenderRay(lightRay);
                         pixelChar = camera.GetChar(pixelColor);
 
-                        //DEBUG: 
-                        if (frameNum == requiredFrameNum)
-                        {
-                            if (GetDistanceBetweenScreenPositions(screenPosition, requiredPixel1) == 1 || 
-                                GetDistanceBetweenScreenPositions(screenPosition, requiredPixel2) == 1)
-                            {
-                                pixelChar = 'ё';
-                            }
+                        ////DEBUG: 
+                        //if (frameNum == requiredFrameNum)
+                        //{
+                        //    if (GetDistanceBetweenScreenPositions(screenPosition, requiredPixel1) == 1 || 
+                        //        GetDistanceBetweenScreenPositions(screenPosition, requiredPixel2) == 1)
+                        //    {
+                        //        pixelChar = 'ё';
+                        //    }
 
-                            if (screenPosition == centerPixel)
-                            {
-                                pixelChar = 'Ё';   
-                            }
+                        //    if (screenPosition == centerPixel)
+                        //    {
+                        //        pixelChar = 'Ё';   
+                        //    }
 
-                            if (screenPosition == requiredPixel1 ||
-                                screenPosition == requiredPixel2 ||
-                                screenPosition == centerPixel)
-                            {
-                                catchedRays.Add(new Vector2Int(x, y), new RayDebugData(startRayDirection, lightRay, pixelColor, pixelChar));
-                            }
-                        }
+                        //    if (screenPosition == requiredPixel1 ||
+                        //        screenPosition == requiredPixel2 ||
+                        //        screenPosition == centerPixel)
+                        //    {
+                        //        catchedRays.Add(new Vector2Int(x, y), new RayDebugData(startRayDirection, lightRay, pixelColor, pixelChar));
+                        //    }
+                        //}
 
                         screen[x + y * camera.Resolution.X] = pixelChar;
 
-                        //DEBUG:
-                        PrintDebugScreenCoordinates(x, y);
+                        ////DEBUG:
+                        //PrintDebugScreenCoordinates(x, y);
                     }
                 }
             }
@@ -131,94 +123,94 @@ namespace RayTracingGraphicEngine3D
             Console.Write(screen);
 
 
-            //DEBUG:
-            if (frameNum == requiredFrameNum)
-            {
-                Console.WriteLine($"CatchedFrame num = {frameNum}");
+            ////DEBUG:
+            //if (frameNum == requiredFrameNum)
+            //{
+            //    Console.WriteLine($"CatchedFrame num = {frameNum}");
 
-                Console.WriteLine();
-                Console.WriteLine("GlobalLight----------------------------------------------");
-                Console.WriteLine($"Intensity = {LocalScene.GlobalLight.Intensity}");
+            //    Console.WriteLine();
+            //    Console.WriteLine("GlobalLight----------------------------------------------");
+            //    Console.WriteLine($"Intensity = {LocalScene.GlobalLight.Intensity}");
 
-                Console.WriteLine();
-                foreach (KeyValuePair<Vector2Int, RayDebugData> pair in catchedRays)
-                {
-                    Vector2Int screenPosition = pair.Key;
-                    LightRay lightRay = pair.Value.lightRay;
-                    float pixelColor = pair.Value.pixelColor;
-                    char pixelChar = pair.Value.pixelChar;
+            //    Console.WriteLine();
+            //    foreach (KeyValuePair<Vector2Int, RayDebugData> pair in catchedRays)
+            //    {
+            //        Vector2Int screenPosition = pair.Key;
+            //        LightRay lightRay = pair.Value.lightRay;
+            //        float pixelColor = pair.Value.pixelColor;
+            //        char pixelChar = pair.Value.pixelChar;
 
 
-                    Console.WriteLine("Check-Pixels----------------------------------------------");
+            //        Console.WriteLine("Check-Pixels----------------------------------------------");
 
-                    Console.WriteLine();
-                    Console.WriteLine($"ScreenPosition = {screenPosition}");
-                    Console.WriteLine($"StartRayDirection = {pair.Value.startRayDirection}");
-                    Console.WriteLine($"ResultIntensity = {pixelColor}");
-                    Console.WriteLine($"ResultChar = {pixelChar}");
+            //        Console.WriteLine();
+            //        Console.WriteLine($"ScreenPosition = {screenPosition}");
+            //        Console.WriteLine($"StartRayDirection = {pair.Value.startRayDirection}");
+            //        Console.WriteLine($"ResultIntensity = {pixelColor}");
+            //        Console.WriteLine($"ResultChar = {pixelChar}");
 
-                    Console.WriteLine();
-                    Console.WriteLine("RayHierarchy:");
-                    lightRay.Hierarchy.PrintHierarchy();
+            //        Console.WriteLine();
+            //        Console.WriteLine("RayHierarchy:");
+            //        lightRay.Hierarchy.PrintHierarchy();
 
-                    Console.WriteLine();
-                    Console.WriteLine();
-                }
+            //        Console.WriteLine();
+            //        Console.WriteLine();
+            //    }
 
-                Console.WriteLine();
-            }
+            //    Console.WriteLine();
+            //}
         }
 
-        //DEBUG
-        private int GetDistanceBetweenScreenPositions(Vector2Int position1, Vector2Int position2)
-        {
-            return (int)(Math.Sqrt(Math.Pow(position1.X - position2.X, 2) + Math.Pow(position1.Y - position2.Y, 2)));
-        }
+        ////DEBUG
+        //private int GetDistanceBetweenScreenPositions(Vector2Int position1, Vector2Int position2)
+        //{
+        //    return (int)(Math.Sqrt(Math.Pow(position1.X - position2.X, 2) + Math.Pow(position1.Y - position2.Y, 2)));
+        //}
 
-        //DEBUG
-        private class RayDebugData
-        {
-            public readonly Vector3 startRayDirection;
-            public readonly LightRay lightRay;
-            public readonly float pixelColor;
-            public readonly char pixelChar;
-            public RayDebugData(in Vector3 startRayDirection, in LightRay lightRay, float pixelColor, char pixelChar) 
-            {
-                this.startRayDirection = startRayDirection;
-                this.lightRay = lightRay;
-                this.pixelColor = pixelColor;
-                this.pixelChar = pixelChar;
-            }
+        ////DEBUG
+        //private class RayDebugData
+        //{
+        //    public readonly Vector3 startRayDirection;
+        //    public readonly LightRay lightRay;
+        //    public readonly float pixelColor;
+        //    public readonly char pixelChar;
+        //    public RayDebugData(in Vector3 startRayDirection, in LightRay lightRay, float pixelColor, char pixelChar) 
+        //    {
+        //        this.startRayDirection = startRayDirection;
+        //        this.lightRay = lightRay;
+        //        this.pixelColor = pixelColor;
+        //        this.pixelChar = pixelChar;
+        //    }
 
-        }
+        //}
 
-        //DEBUG
-        private void PrintDebugScreenCoordinates(int x, int y)
-        {
-            if (x == 0)
-            {
-                char pixel = char.Parse($"{(y % 10)}");
+        ////DEBUG
+        //private void PrintDebugScreenCoordinates(int x, int y)
+        //{
+        //    if (x == 0)
+        //    {
+        //        char pixel = char.Parse($"{(y % 10)}");
 
-                if (y % 10 == 0)
-                {
-                    pixel = ' ';
-                }
+        //        if (y % 10 == 0)
+        //        {
+        //            pixel = ' ';
+        //        }
 
-                screen[x + y * camera.Resolution.X] = pixel;
-            }
+        //        screen[x + y * camera.Resolution.X] = pixel;
+        //    }
 
-            if (y == 0)
-            {
-                char pixel = char.Parse($"{(x % 10)}");
+        //    if (y == 0)
+        //    {
+        //        char pixel = char.Parse($"{(x % 10)}");
 
-                if (x % 10 == 0)
-                {
-                    pixel = ' ';
-                }
+        //        if (x % 10 == 0)
+        //        {
+        //            pixel = ' ';
+        //        }
 
-                screen[x + y * camera.Resolution.X] = pixel;
-            }
-        }
+        //        screen[x + y * camera.Resolution.X] = pixel;
+        //    }
+        //}
 
         //TODO: test sky char maybe its redundant
 
@@ -229,7 +221,7 @@ namespace RayTracingGraphicEngine3D
             if (ray.Intensity < MinRayIntensity 
                 || (!intersection.HasValue && ray.InteractionCount > 0))
             {
-                return ray.Intensity * (GetDirectionsLightIntensity(ray.Ray.Direction) + LocalScene.GlobalLight.Intensity);
+                return ray.Intensity * GetDirectionsLightIntensity(ray.Ray.Direction) + LocalScene.GlobalLight.Intensity;
             }
 
             if (intersection.HasValue)
@@ -244,7 +236,7 @@ namespace RayTracingGraphicEngine3D
 
                 if (intersection.Value.Intersectable is ILight light)
                 {
-                    return ray.Intensity * (light.Intensity + GetDirectionsLightIntensity(ray.Ray.Direction) + LocalScene.GlobalLight.Intensity);
+                    return ray.Intensity * (light.Intensity + GetDirectionsLightIntensity(ray.Ray.Direction)) + LocalScene.GlobalLight.Intensity;
                 }
                 else if (intersection.Value.Intersectable is IShapeRenderer renderer)
                 {

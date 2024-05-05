@@ -44,12 +44,24 @@ namespace RayTracingGraphicEngine3D.RayTracingEngine.Rays.IntersectableShapes
             Size = size;
         }
 
+        private float SafeDivide(float a, float b)
+        {
+            if (b == 0)
+            {
+                return 0;
+            }
+            else
+            {
+                return a / b;
+            }
+        }
+
         public override ShapeIntersection? GetShapeIntersection(Ray ray)
         {
             Vector3 position = transform.Position;
             ray.Origin = ray.Origin -= position;
 
-            Vector3 m = new Vector3(1f / ray.Direction.X, 1f / ray.Direction.Y, 1f / ray.Direction.Z);
+            Vector3 m = new Vector3(SafeDivide(1, ray.Direction.X), SafeDivide(1, ray.Direction.Y), SafeDivide(1, ray.Direction.Z));
             Vector3 n = m * ray.Origin;
             Vector3 k = Vector3.Abs(m) * Size;
             Vector3 t1 = -n - k;

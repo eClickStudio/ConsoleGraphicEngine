@@ -1,0 +1,111 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v7.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v7.0": {
+      "ConsoleRayTracingRenderer/1.0.0": {
+        "dependencies": {
+          "Commands": "1.0.0",
+          "ConsoleSetter": "1.0.0",
+          "Engine3D": "1.0.0",
+          "RayTracingGraphicEngine3D": "1.0.0"
+        },
+        "runtime": {
+          "ConsoleRayTracingRenderer.dll": {}
+        }
+      },
+      "Commands/1.0.0": {
+        "runtime": {
+          "Commands.dll": {}
+        }
+      },
+      "ConsoleSetter/1.0.0": {
+        "runtime": {
+          "ConsoleSetter.dll": {}
+        }
+      },
+      "Engine3D/1.0.0": {
+        "dependencies": {
+          "Hierarchy": "1.0.0",
+          "MathExtensions": "1.0.0"
+        },
+        "runtime": {
+          "Engine3D.dll": {}
+        }
+      },
+      "Hierarchy/1.0.0": {
+        "runtime": {
+          "Hierarchy.dll": {}
+        }
+      },
+      "MathExtensions/1.0.0": {
+        "runtime": {
+          "MathExtensions.dll": {}
+        }
+      },
+      "RayTracingGraphicEngine3D/1.0.0": {
+        "dependencies": {
+          "Engine3D": "1.0.0",
+          "Hierarchy": "1.0.0",
+          "MathExtensions": "1.0.0"
+        },
+        "runtime": {
+          "RayTracingGraphicEngine3D.dll": {}
+        }
+      },
+      "Microsoft.Bcl.HashCode/1.0.0.0": {
+        "runtime": {
+          "Microsoft.Bcl.HashCode.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "4.700.20.56604"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "ConsoleRayTracingRenderer/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Commands/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "ConsoleSetter/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Engine3D/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Hierarchy/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "MathExtensions/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "RayTracingGraphicEngine3D/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Microsoft.Bcl.HashCode/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
